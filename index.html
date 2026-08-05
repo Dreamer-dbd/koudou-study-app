@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>寇豆学习乐园 · 上海六年级</title>
+<style>
+  /* ============ 全局亮色糖果主题 ============ */
+  :root {
+    --pink: #ff8fb1;
+    --pink-dark: #ff5f93;
+    --blue: #6ec6ff;
+    --blue-dark: #3aa0ff;
+    --yellow: #ffd35e;
+    --green: #7ed957;
+    --green-dark: #4caf50;
+    --purple: #b48cff;
+    --bg1: #fff7fb;
+    --bg2: #eaf6ff;
+    --ink: #3a3a4a;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Comic Sans MS", system-ui, sans-serif;
+    font-size: 21px;                 /* 正文 ≥20px */
+    color: var(--ink);
+    background: linear-gradient(160deg, var(--bg1), var(--bg2));
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 16px; }
+
+  /* ============ 顶部标题 + 积分 ============ */
+  header {
+    text-align: center;
+    background: linear-gradient(90deg, var(--pink), var(--purple), var(--blue));
+    color: #fff;
+    border-radius: 0 0 26px 26px;
+    padding: 18px 14px 22px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  }
+  header h1 { margin: 0; font-size: 34px; letter-spacing: 1px; text-shadow: 1px 2px 0 rgba(0,0,0,0.12); }
+  .points-pill {
+    display: inline-block; margin-top: 10px;
+    background: var(--yellow); color: #7a5b00;
+    font-size: 22px; font-weight: 700;
+    padding: 6px 18px; border-radius: 999px;
+    box-shadow: 0 3px 0 #e0a800;
+  }
+
+  /* ============ 模块导航 Tab ============ */
+  .tabs { display: flex; gap: 12px; justify-content: center; margin: 18px 0; flex-wrap: wrap; }
+  .tab-btn {
+    font-size: 22px; font-weight: 700;
+    border: none; border-radius: 18px;
+    padding: 12px 28px; cursor: pointer;
+    background: #fff; color: var(--blue-dark);
+    box-shadow: 0 4px 0 #cfd8e3;
+    /* 高亮切换平滑过渡（背景/文字/阴影淡变，不跳动） */
+    transition: transform .08s, background .25s ease, color .25s ease, box-shadow .25s ease;
+  }
+  .tab-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #cfd8e3; }
+  .tab-btn.active { background: var(--blue); color: #fff; box-shadow: 0 4px 0 var(--blue-dark); }
+  .tab-btn.disabled { background: #f0f0f3; color: #aaa; box-shadow: 0 4px 0 #d8d8de; cursor: not-allowed; }
+
+  /* ============ 模块内容区切换过渡 ============ */
+  /* 标签栏（#moduleTabs）始终常驻在 #app 之外的静态 DOM，绝不被重新渲染。
+     内容只在 #app 内就地渲染；每次切换都给 #app 的直接子节点一个
+     轻微的「淡入 + 上滑」入场动画，避免生硬跳动。纯 CSS 实现，
+     不改动任何 JS 函数与签名，也不会整页 reload。 */
+  #app > * { animation: appEnter .26s ease both; }
+  @keyframes appEnter {
+    0%   { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  /* 尊重「减少动态效果」的系统偏好 */
+  @media (prefers-reduced-motion: reduce) {
+    #app > * { animation: none; }
+    .tab-btn { transition: transform .08s; }
+  }
+
+  /* ============ 卡片 ============ */
+  .card {
+    background: var(--card);
+    border-radius: 22px;
+    padding: 22px;
+    box-shadow: 0 8px 22px rgba(80,80,120,0.12);
+    margin-bottom: 18px;
+  }
+  .card h2 { font-size: 28px; margin: 0 0 6px; color: var(--pink-dark); }
+  .subtitle { font-size: 18px; color: #888; margin-bottom: 14px; }
+
+  /* ============ 大按钮 ============ */
+  .btn {
+    font-size: 22px; font-weight: 700;
+    border: none; border-radius: 16px;
+    padding: 14px 26px; cursor: pointer; color: #fff;
+    background: var(--green); box-shadow: 0 5px 0 var(--green-dark);
+    transition: transform .08s, filter .1s; min-width: 120px;
+  }
+  .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--green-dark); }
+  .btn:hover { filter: brightness(1.05); }
+  .btn.blue { background: var(--blue); box-shadow: 0 5px 0 var(--blue-dark); }
+  .btn.pink { background: var(--pink); box-shadow: 0 5px 0 var(--pink-dark); }
+  .btn.yellow { background: var(--yellow); color: #7a5b00; box-shadow: 0 5px 0 #e0a800; }
+  .btn.ghost { background: #fff; color: var(--ink); box-shadow: 0 5px 0 #d8d8de; }
+  .btn:disabled { background: #e6e6ea; color: #aaa; box-shadow: 0 5px 0 #d0d0d6; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
+
+  /* ============ 章节网格 ============ */
+  .chapter-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .chapter-btn {
+    border: none; border-radius: 20px; cursor: pointer;
+    padding: 26px 16px; font-size: 24px; font-weight: 700; color: #fff;
+    box-shadow: 0 6px 0 rgba(0,0,0,0.15); transition: transform .08s;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .chapter-btn:active { transform: translateY(3px); }
+  .chapter-btn .emoji { font-size: 44px; }
+  .chapter-btn.c1 { background: var(--pink); }
+  .chapter-btn.c2 { background: var(--blue); }
+  .chapter-btn.c3 { background: var(--green); }
+  .chapter-btn.c4 { background: var(--purple); }
+
+  /* ============ 进度条 ============ */
+  .progress-wrap { background: #eee; border-radius: 999px; height: 20px; overflow: hidden; margin: 10px 0 4px; }
+  .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), var(--blue)); transition: width .3s; }
+  .progress-label { font-size: 16px; color: #888; text-align: right; }
+
+  /* ============ 题目 ============ */
+  .q-meta { font-size: 16px; color: var(--purple); margin-bottom: 6px; }
+  .q-text { font-size: 26px; font-weight: 700; margin: 6px 0 18px; }
+  .answer-input {
+    width: 100%; font-size: 24px; padding: 14px 16px;
+    border: 3px solid var(--blue); border-radius: 16px; outline: none;
+  }
+  .answer-input:focus { border-color: var(--pink); }
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .opt-btn {
+    font-size: 22px; padding: 16px; border-radius: 16px; cursor: pointer;
+    border: 3px solid #d8d8de; background: #fff; color: var(--ink); font-weight: 700;
+    transition: transform .08s;
+  }
+  .opt-btn:active { transform: scale(0.97); }
+  .opt-btn.selected { border-color: var(--green); background: #eafeef; }
+
+  /* ============ 反馈 ============ */
+  .feedback { margin-top: 16px; padding: 16px; border-radius: 16px; font-size: 21px; font-weight: 700; animation: pop .3s; }
+  .feedback.ok { background: #e6ffe9; color: var(--green-dark); border: 2px solid var(--green); }
+  .feedback.no { background: #ffeaea; color: #d33; border: 2px solid #ff8a8a; }
+  @keyframes pop { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  .shake { animation: shake .4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
+
+  /* ============ 成绩 / 建议 ============ */
+  .score-big { font-size: 60px; font-weight: 800; color: var(--pink-dark); text-align: center; }
+  .suggest-item { background: #fff4fb; border-left: 6px solid var(--pink); padding: 12px 16px; border-radius: 12px; margin: 10px 0; font-size: 19px; }
+  .history-list { list-style: none; padding: 0; margin: 0; }
+  .history-item { background: #f6faff; border-radius: 14px; padding: 12px 16px; margin: 10px 0; font-size: 18px; }
+  .trend-bar { height: 18px; border-radius: 999px; background: var(--blue); margin-top: 6px; }
+  .coming-soon { text-align: center; font-size: 26px; color: var(--purple); padding: 40px 0; }
+
+  .footer-note { text-align: center; font-size: 15px; color: #aaa; margin-top: 18px; }
+
+  /* ============ 徽章墙 ============ */
+  .badge-wall { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 6px; }
+  .badge-item { background: linear-gradient(135deg, #fff3d6, #ffe0ef); border-radius: 18px; padding: 16px 12px; text-align: center; box-shadow: 0 4px 0 rgba(0,0,0,0.08); }
+  .badge-item.locked { background: #f0f0f3; color: #aaa; box-shadow: 0 4px 0 #d8d8de; }
+  .badge-item .badge-emoji { font-size: 46px; }
+  .badge-item .badge-name { font-size: 20px; font-weight: 700; margin-top: 4px; }
+  .badge-item .badge-desc { font-size: 14px; color: #888; margin-top: 4px; }
+  .badge-item.locked .badge-desc { color: #bbb; }
+
+  /* ============ 错题集 ============ */
+  .wrong-list { margin-top: 6px; }
+  .wrong-item { background: #fff6f6; border-left: 6px solid #ff8a8a; border-radius: 14px; padding: 14px 16px; margin: 12px 0; }
+  .wrong-meta { font-size: 15px; color: var(--purple); }
+  .wrong-q { font-size: 22px; font-weight: 700; margin: 8px 0; }
+  .wrong-ans { font-size: 18px; margin: 6px 0; }
+  .wrong-explain { font-size: 17px; color: #666; }
+
+  /* ============ 设置 ============ */
+  .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 4px; border-bottom: 1px dashed #eee; font-size: 20px; font-weight: 700; }
+
+  /* ============ 庆祝弹层 ============ */
+  .celebrate-overlay { position: fixed; inset: 0; background: rgba(40,20,60,0.55); display: flex; align-items: center; justify-content: center; z-index: 999; animation: pop .25s; padding: 16px; }
+  .celebrate-card { background: #fff; border-radius: 24px; padding: 26px; max-width: 520px; width: 100%; text-align: center; box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+  .celebrate-title { font-size: 28px; font-weight: 800; color: var(--pink-dark); margin-bottom: 14px; }
+  .badge-list { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px; }
+  .badge-pop { background: linear-gradient(135deg, #fff3d6, #ffe0ef); border-radius: 18px; padding: 14px; width: 130px; animation: pop .4s; }
+  .badge-pop .badge-emoji { font-size: 44px; }
+  .badge-pop .badge-name { font-size: 19px; font-weight: 700; margin-top: 4px; }
+  .badge-pop .badge-desc { font-size: 13px; color: #888; margin-top: 4px; }
+
+  /* ============ 上传题库 模态框 ============ */
+  .upload-modal { position: fixed; inset: 0; background: rgba(40,20,60,0.55); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 16px; animation: pop .2s; }
+  .upload-panel { background: #fff; border-radius: 22px; padding: 22px; max-width: 600px; width: 100%; max-height: 86vh; overflow-y: auto; box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+  .upload-head { display: flex; align-items: center; justify-content: space-between; font-size: 26px; font-weight: 800; color: var(--pink-dark); margin-bottom: 12px; }
+  .upload-x { border: none; background: #f0f0f3; color: #888; border-radius: 12px; font-size: 18px; width: 38px; height: 38px; cursor: pointer; }
+  .upload-drop { border: 3px dashed var(--blue); border-radius: 16px; padding: 26px 16px; text-align: center; color: var(--blue-dark); font-weight: 700; cursor: pointer; background: #f5fbff; }
+  .upload-drop.drag { background: #e6f4ff; border-color: var(--blue-dark); }
+  .upload-hint { font-size: 15px; color: #888; margin: 10px 0; line-height: 1.5; }
+  .upload-progress { height: 14px; background: #eee; border-radius: 999px; overflow: hidden; margin: 10px 0; }
+  .upload-progress-bar { height: 100%; width: 60%; background: linear-gradient(90deg, var(--green), var(--blue)); transition: width .3s; }
+  .upload-result { font-size: 17px; margin-top: 12px; max-height: 40vh; overflow-y: auto; }
+  .upload-summary { font-size: 19px; font-weight: 700; margin-bottom: 8px; }
+  .upload-preview { list-style: none; padding: 0; margin: 0; }
+  .upload-preview li { background: #f6faff; border-left: 5px solid var(--blue); border-radius: 10px; padding: 8px 12px; margin: 8px 0; font-size: 17px; }
+  .up-mod { color: var(--purple); font-weight: 700; margin-right: 6px; }
+  .upload-hints { color: #d33; font-size: 15px; margin-top: 8px; }
+  .upload-note { color: #b06a00; font-size: 15px; background: #fff7e6; border-radius: 10px; padding: 8px 12px; margin-top: 8px; }
+  #uploadInput { display: block; margin: 10px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🌟 寇豆学习乐园 🌟</h1>
+    <div class="points-pill" id="pointsPill">我的积分：0</div>
+  </header>
+
+  <div class="tabs" id="moduleTabs">
+    <button class="tab-btn" data-module="语文" onclick="onModule('语文')">📖 语文</button>
+    <button class="tab-btn active" data-module="数学" onclick="onModule('数学')">🔢 数学</button>
+    <button class="tab-btn" data-module="英语" onclick="onModule('英语')">🔤 英语</button>
+  </div>
+
+  <div id="app"><!-- 动态渲染 --></div>
+
+  <div class="footer-note">零依赖 · 双击即玩 · 数据保存在本机浏览器</div>
+</div>
+
+<script>
+/* =========================================================================
+ * 寇豆数学乐园 —— 上海六年级数学 MVP
+ * 单文件、零依赖、原生 JS。代码按「数据 / 纯函数 / 存储 / 渲染」分层。
+ * 扩展入口：onModule('语文'|'数学'|'英语') 与 MODULES 配置，便于后续加模块。
+ * ========================================================================= */
+
+/* ----------------------------- 模块配置（扩展入口） ----------------------------- */
+const MODULES = {
+  '语文': { ready: true, emoji: '📖' },
+  '数学': { ready: true,  emoji: '🔢' },
+  '英语': { ready: true, emoji: '🔤' }
+};
+
+/* =========================================================================
+ * 题库 / 沪学习内容源说明
+ * -------------------------------------------------------------------------
+ * ⚠️ 题目当前为「示例题·待替换」。它们仅用于演示与体验，并非真实考纲题。
+ *
+ * 如何替换成真实题目（推荐数据源：「沪学习」App）：
+ *   1) 在「沪学习」App 中按章节浏览上海六年级数学题，手抄或用其导出功能获取题目；
+ *   2) 按下方每个章节数组的相同 JSON 结构，把题目粘贴替换进去即可，无需改动任何逻辑；
+ *   3) 字段说明（单题）：
+ *        {
+ *          id:        'youshu-001',        // 章节内唯一字符串 ID（错题集按此合并）
+ *          type:      '有理数-绝对值',      // 题型标签（用于薄弱点归类与展示）
+ *          kind:      'calc',              // 'calc'|'choice'|'solve' 三种判分方式
+ *          q:         '计算：|-7| = ?',    // 题干
+ *          options:   null,               // choice 题的选项数组；非选择题填 null
+ *          answer:    '7',                // 标准答案（choice 填选项原文；solve 填 'x=5'）
+ *          explain:   '负数的绝对值…'       // 解析（答错时展示）
+ *        }
+ *   4) 每章题目数量可任意增减；为让「连对大师」徽章（单章连对≥10）可达，建议每章 ≥10 题。
+ *   注意：本程序零依赖、纯本地，绝不联网抓取，请手动粘贴题目。
+ * ========================================================================= */
+const QUESTION_BANK = {
+  '有理数': [
+    { id: 'ys-101', type: '有理数-绝对值', kind: 'calc',   q: '计算：|-7| = ?', options: null, answer: '7', explain: '负数的绝对值等于它的相反数，|-7| = 7。' },
+    { id: 'ys-102', type: '有理数-绝对值', kind: 'calc',   q: '计算：|-2.4| = ?', options: null, answer: '2.4', explain: '负数的绝对值等于它的相反数，|-2.4| = 2.4。' },
+    { id: 'ys-103', type: '有理数-分类', kind: 'choice', q: '下列各数中，为负数的是（ ）。', options: ['3.6', '3/5', '2379', '-1/23'], answer: '-1/23', explain: '只有 -1/23 小于 0，是负数。' },
+    { id: 'ys-104', type: '有理数-分类', kind: 'choice', q: '在 1.3，2，0，0.35，-41 中，非负数一共有几个？', options: ['1个', '2个', '3个', '4个'], answer: '4个', explain: '非负数指 0 和正数：1.3、2、0、0.35 共 4 个。' },
+    { id: 'ys-105', type: '有理数-加减', kind: 'calc',   q: '早上气温 6℃，中午上升 7℃，晚上下降 5℃，晚上气温是多少℃？', options: null, answer: '8', explain: '6 + 7 - 5 = 8（℃）。' },
+    { id: 'ys-106', type: '有理数-绝对值', kind: 'calc',   q: '一个数 a 在原点左侧，且 |a| = 3，则 a = ?', options: null, answer: '-3', explain: '原点左侧为负数，|a|=3 即 a=-3。' },
+    { id: 'ys-107', type: '有理数-数轴', kind: 'calc',   q: '数轴上一点先左移 4 个单位，再右移 2 个单位后到达原点，起点表示的数是？', options: null, answer: '2', explain: '设起点为 x：x - 4 + 2 = 0 → x = 2。' },
+    { id: 'ys-108', type: '有理数-加法', kind: 'calc',   q: '计算：(-3) + (-1) = ?', options: null, answer: '-4', explain: '同号相加，绝对值相加、符号为负：3+1=4，得 -4。' },
+    { id: 'ys-109', type: '有理数-减法', kind: 'calc',   q: '计算：0 - 8 = ?', options: null, answer: '-8', explain: '0 减 8 等于 -8。' },
+    { id: 'ys-110', type: '有理数-混合', kind: 'calc',   q: '计算：2 - |-8| - (-6) = ?', options: null, answer: '0', explain: '2 - 8 + 6 = 0。' },
+    { id: 'ys-111', type: '有理数-加减', kind: 'calc',   q: '计算：0.33 - 3.33 - (-3) = ?', options: null, answer: '0', explain: '0.33 - 3.33 + 3 = 0。' },
+    { id: 'ys-112', type: '有理数-加减', kind: 'calc',   q: '计算：0 - 2 + (-4) = ?', options: null, answer: '-6', explain: '0 - 2 - 4 = -6。' },
+    { id: 'ys-113', type: '有理数-乘方', kind: 'calc',   q: '计算：-3³ = ?', options: null, answer: '-27', explain: '先算 3³=27，再取负：-27。' },
+    { id: 'ys-114', type: '有理数-乘方', kind: 'calc',   q: '计算：(-2)⁴ = ?', options: null, answer: '16', explain: '负数的偶次方为正：(-2)⁴ = 16。' },
+    { id: 'ys-115', type: '有理数-混合', kind: 'calc',   q: '计算：(-24) + (-15) - |-31| - (-50) = ?', options: null, answer: '-20', explain: '-24 - 15 - 31 + 50 = -20。' },
+    { id: 'ys-116', type: '有理数-混合', kind: 'calc',   q: '计算：(-|-22|) - (-12) + 21 - 3 = ?', options: null, answer: '8', explain: '-22 + 12 + 21 - 3 = 8。' },
+    { id: 'ys-117', type: '有理数-乘方', kind: 'choice', q: '下列各数中，是负数的是（ ）。', options: ['(-1)^200', '(-2)^3', '3', '-(-6)'], answer: '(-2)^3', explain: '(-1)^200=1，(-2)^3=-8<0，3>0，-(-6)=6>0，负数只有 (-2)^3。' },
+  ],
+  '整式加减': [
+    { id: 'zs-201', type: '整式-求值', kind: 'calc',   q: '当 x = 3 时，求 2x + x² - 3x 的值。', options: null, answer: '6', explain: '代入：2×3 + 9 - 9 = 6。' },
+    { id: 'zs-202', type: '整式-求值', kind: 'calc',   q: '当 x = -1 时，求 -2x² + x³ - 5x 的值。', options: null, answer: '2', explain: '代入：-2×1 + (-1) - 5×(-1) = -2 -1 + 5 = 2。' },
+    { id: 'zs-203', type: '整式-求值', kind: 'calc',   q: '当 x = -2 时，求 x + (2x² - 3x) 的值。', options: null, answer: '12', explain: '代入：-2 + (8 + 6) = 12。' },
+    { id: 'zs-204', type: '整式-去括号', kind: 'calc',   q: '去括号化简：3(2x + 1) = ?', options: null, answer: '6x+3', explain: '分配律：3×2x + 3×1 = 6x + 3。' },
+    { id: 'zs-205', type: '整式-求值', kind: 'calc',   q: '当 x = -2，y = -1 时，求 2x + y - (x - y²) 的值。', options: null, answer: '-2', explain: '代入：-4 -1 - (-2 -1) = -5 + 3 = -2。' },
+    { id: 'zs-206', type: '整式-求值', kind: 'calc',   q: '当 a = -2 时，求 a² + a - 3a³ - 6a - 13 的值。', options: null, answer: '25', explain: '代入：4 -2 +24 +12 -13 = 25。' },
+    { id: 'zs-207', type: '整式-求值', kind: 'calc',   q: '当 a = -3 时，求 a³ - 4a² - (a + a²) 的值。', options: null, answer: '-69', explain: '代入：-27 -36 - (-3 + 9) = -63 - 6 = -69。' },
+    { id: 'zs-208', type: '整式-去括号', kind: 'calc',   q: '化简：-2(a + b) - a + 2b = ?', options: null, answer: '-3a', explain: '-2a - 2b - a + 2b = -3a。' },
+    { id: 'zs-209', type: '整式-去括号', kind: 'calc',   q: '化简：4(a + b) - a + 2(a + b) = ?', options: null, answer: '5a+6b', explain: '4a+4b-a+2a+2b = 5a+6b。' },
+    { id: 'zs-210', type: '整式-化简', kind: 'calc',   q: '先去括号再合并同类项：x + y - (3x - y) + (x + 2) = ?', options: null, answer: '-x+2y+2', explain: 'x+y-3x+y+x+2 = -x+2y+2。' },
+    { id: 'zs-211', type: '整式-化简求值', kind: 'calc',   q: '当 a = -3，b = 10 时，求 (3b - 2a) - (a + 2b) - (2a - b) 的值。', options: null, answer: '35', explain: '代入：36 - 17 - (-16) = 35。' },
+    { id: 'zs-212', type: '整式-综合', kind: 'calc',   q: '已知 A=2a³-3b+2，B=b³-5a+6b+1，当 a=-1，b=2 时，求 2A + B - 2 的值。', options: null, answer: '12', explain: 'A=-6，B=26，2×(-6)+26-2=12。' },
+    { id: 'zs-213', type: '整式-求值', kind: 'calc',   q: '当 a = -2，b = -3 时，求 3(2b - 2a) + 2(1 + a) 的值。', options: null, answer: '-8', explain: '代入：3×(-2) + 2×(-1) = -6 -2 = -8。' },
+    { id: 'zs-214', type: '整式-求值', kind: 'calc',   q: '当 a = 3，b = -3 时，求 -[-b + 2(a + 2b)] - a + 2b 的值。', options: null, answer: '-6', explain: '代入：-[3 + 2×(-3)] - 3 - 6 = 3 - 9 = -6。' },
+    { id: 'zs-215', type: '整式-求值', kind: 'calc',   q: '当 a = -1，b = 2 时，求 3(b - a) - [b - 2(a + b)] 的值。', options: null, answer: '9', explain: '代入：3×3 - [2 - 2×1] = 9 - 0 = 9。' },
+    { id: 'zs-216', type: '整式-去括号', kind: 'choice', q: '下列计算正确的是（ ）。', options: ['2a+3b=5a+b', '-a-(b-c)=a-b-c', '4m-(n+3m)=m-n', 'm-(m+n-2m)=3m+n'], answer: '4m-(n+3m)=m-n', explain: '4m-(n+3m)=4m-n-3m=m-n，正确。' },
+    { id: 'zs-217', type: '整式-求值', kind: 'calc',   q: '当 x = 5，y = 2 时，求 2x² - (y + x²) + 3 - (y - x) 的值。', options: null, answer: '29', explain: '化简：2x² - y - x² + 3 - y + x = x² + x - 2y + 3；代入：25 + 5 - 4 + 3 = 29。' },
+    { id: 'zs-218', type: '整式-求值', kind: 'calc',   q: '当 a = -2，b = -1 时，求 2a² + 6b² - a + 4b² + 7 + 6a 的值。', options: null, answer: '15', explain: '化简：2a² + 10b² + 5a + 7；代入：8 + 10 - 10 + 7 = 15。' },
+  ],
+  '一元一次方程': [
+    { id: 'fc-301', type: '方程-等式性质', kind: 'choice', q: '根据等式性质，下列结论错误的是（ ）。', options: ['若x=y，则x²=y²', '若x=y²，则x=y', '若x=y，则x³=y³', '若x³=y³，则x=y'], answer: '若x=y²，则x=y', explain: 'x=y² 不能推出 x=y（如 x=4,y=2）。' },
+    { id: 'fc-302', type: '方程-等式性质', kind: 'choice', q: '根据等式性质，下列结论错误的是（ ）。', options: ['若a=b，则ac=bc', '若a=b，则2a-b=b', '若a=b，则ab=a²', '若a=b，则a-b=1'], answer: '若a=b，则a-b=1', explain: 'a=b 时 a-b=0，不是 1。' },
+    { id: 'fc-303', type: '方程-移项', kind: 'solve',  q: '解方程：3x - 2 = x + 4。', options: null, answer: 'x=3', explain: '移项：3x - x = 4 + 2 → 2x = 6 → x = 3。' },
+    { id: 'fc-304', type: '方程-等式性质', kind: 'choice', q: '根据等式性质，下列结论错误的是（ ）。', options: ['若a(c²+1)=b(c²+1)，则a=b', '若3a+2b=b，则6a+2b=0', '若5a=b+1，则a=b+1', '若2a+c=2b+c，则a=b'], answer: '若5a=b+1，则a=b+1', explain: '应得 a=(b+1)/5，不是 a=b+1。' },
+    { id: 'fc-305', type: '方程-求解', kind: 'solve',  q: '解方程：4x - 5 = 2(3 - x)。', options: null, answer: 'x=11/6', explain: '4x-5=6-2x → 6x=11 → x=11/6。' },
+    { id: 'fc-306', type: '方程-求解', kind: 'solve',  q: '解方程：3(4 + 2x) = 15 - x。', options: null, answer: 'x=3/7', explain: '12+6x=15-x → 7x=3 → x=3/7。' },
+    { id: 'fc-307', type: '方程-求解', kind: 'solve',  q: '解方程：(21 - 6x) + 3 = 0。', options: null, answer: 'x=4', explain: '24-6x=0 → 6x=24 → x=4。' },
+    { id: 'fc-308', type: '方程-求解', kind: 'solve',  q: '解方程：2x - 5 = 3x + 7。', options: null, answer: 'x=-12', explain: '2x-3x=7+5 → -x=12 → x=-12。' },
+    { id: 'fc-309', type: '方程-求解', kind: 'solve',  q: '解方程：-2(x + 3) - 5 = -3(2x - 4)。', options: null, answer: 'x=23/4', explain: '-2x-11=-6x+12 → 4x=23 → x=23/4。' },
+    { id: 'fc-310', type: '方程-求解', kind: 'solve',  q: '解方程：4(2x - 1) - 3(6x + 2) = x - 21。', options: null, answer: 'x=1', explain: '-10x-10=x-21 → -11x=-11 → x=1。' },
+    { id: 'fc-311', type: '方程-求解', kind: 'solve',  q: '解方程：3 + x = 2x - 1。', options: null, answer: 'x=4', explain: 'x-2x=-1-3 → -x=-4 → x=4。' }
+  ],
+  '线段与角': [
+    { id: 'jx-401', type: '几何-线段中点', kind: 'choice', q: '如图，点 C 是线段 AB 的中点，则下列线段关系错误的是（ ）。', options: ['AC=BC', 'AB=AC+BC', 'AC<BC', 'AC=1/2 AB'], answer: 'AC<BC', explain: '中点使 AC=BC，故 AC<BC 错误。' },
+    { id: 'jx-402', type: '几何-线段', kind: 'choice', q: '已知 AC=BD，则下列线段关系正确的是（ ）。', options: ['AD>BC', 'AD=BC', 'AD<BC', '无法确定'], answer: 'AD=BC', explain: 'AD=AC+CD，BC=BD+CD=AC+CD，故 AD=BC。' },
+    { id: 'jx-403', type: '几何-线段', kind: 'choice', q: '已知 AC=3BC，则下列线段关系正确的是（ ）。', options: ['BC=1/3 AB', 'AC=3/4 AB', 'BC=1/4 AB', '4BC=AB'], answer: '4BC=AB', explain: 'AB=AC+BC=4BC，故 4BC=AB。' },
+    { id: 'jx-404', type: '几何-线段三等分', kind: 'calc', q: 'C、D 是 AB 的三等分点，AD=6cm，则 BD = ? cm', options: null, answer: '3', explain: 'AD 含 2 段，每段 3cm，BD 为 1 段 = 3cm。' },
+    { id: 'jx-405', type: '几何-余角', kind: 'calc',   q: '一个角 30°，它的余角是多少度？', options: null, answer: '60', explain: '余角和为 90°：90 - 30 = 60°。' },
+    { id: 'jx-406', type: '几何-线段', kind: 'calc',   q: '已知 AB=10cm，CD=2cm，点 D 是 BC 的中点，则 AC = ? cm', options: null, answer: '6', explain: 'BC=2×CD=4cm，AC=AB-BC=10-4=6cm。' },
+    { id: 'jx-407', type: '几何-补角比余角', kind: 'calc', q: '一个角的补角比它的余角的 2 倍多 32°，这个角是多少度？', options: null, answer: '32', explain: '设角为 x：180-x=2(90-x)+32 → x=32。' },
+    { id: 'jx-408', type: '几何-补角比余角', kind: 'calc', q: '一个角的补角比它的余角的 3 倍少 4°，这个角是多少度？', options: null, answer: '43', explain: '180-x=3(90-x)-4 → 2x=86 → x=43。' },
+    { id: 'jx-409', type: '几何-补角比余角', kind: 'calc', q: '一个角的补角比它的余角的 2 倍多 20°，这个角是多少度？', options: null, answer: '20', explain: '180-x=2(90-x)+20 → x=20。' },
+    { id: 'jx-410', type: '几何-补角比余角', kind: 'calc', q: '一个角的补角比它的余角的 4 倍少 18°，这个角是多少度？', options: null, answer: '54', explain: '180-x=4(90-x)-18 → 3x=162 → x=54。' },
+    { id: 'jx-411', type: '几何-补角', kind: 'calc',   q: '一个角 100°，它的补角是多少度？', options: null, answer: '80', explain: '补角和为 180°：180 - 100 = 80°。' },
+    { id: 'jx-412', type: '几何-补角', kind: 'calc',   q: '一个角 110°，它的补角是多少度？', options: null, answer: '70', explain: '补角和为 180°：180 - 110 = 70°。' },
+    { id: 'jx-413', type: '几何-度分秒', kind: 'choice', q: '计算 23°47′29″ - 1°59′59″ = ？', options: ['21°47′30″', '21°48′30″', '22°47′30″', '21°47′29″'], answer: '21°47′30″', explain: '借位相减：23°47′29″ - 1°59′59″ = 21°47′30″。' }
+  ]
+};
+
+
+/* =========================================================================
+ * 语文 / 英语 题库（新增模块，结构与 QUESTION_BANK 完全一致）
+ * 章节 -> [{id,type,kind,q,options,answer,explain}]
+ * 章节名与数学不重名；ID 前缀 yw-（语文）/ en-（英语），与数学 ys/zs/fc/jx 隔离，
+ * 避免错题集（按 id 合并）与成绩键冲突。
+ * ========================================================================= */
+const YUWEN_BANK = {
+  '基础知识': [
+    { id: "yw-101", type: "语文-基础知识", kind: "fill",   q: "补充成语：专心致____", options: null, answer: "志", explain: "“专心致志”形容一心一意，集中精神。" },
+    { id: "yw-102", type: "语文-基础知识", kind: "fill",   q: "补充成语：自____自在", options: null, answer: "由", explain: "“自由自在”形容没有拘束，安闲舒适。" },
+    { id: "yw-103", type: "语文-基础知识", kind: "fill",   q: "补充成语：画蛇____足", options: null, answer: "添", explain: "“画蛇添足”比喻做了多余的事，反而不恰当。" },
+    { id: "yw-104", type: "语文-基础知识", kind: "fill",   q: "补充成语：守____待兔", options: null, answer: "株", explain: "“守株待兔”比喻死守经验，不知变通。" },
+    { id: "yw-105", type: "语文-基础知识", kind: "choice", q: "下列句子中，使用了比喻修辞手法的是（ ）。", options: ["太阳像一个大火球。", "他跑得很快。", "我们高兴极了。", "今天下雨了。"], answer: "太阳像一个大火球。", explain: "把太阳比作大火球，是比喻。" },
+    { id: "yw-106", type: "语文-基础知识", kind: "choice", q: "下列句子中，使用了拟人修辞手法的是（ ）。", options: ["小鸟在枝头唱歌。", "月亮像小船。", "他很高。", "风吹过了。"], answer: "小鸟在枝头唱歌。", explain: "把小鸟当作人会“唱歌”，是拟人。" },
+    { id: "yw-107", type: "语文-基础知识", kind: "choice", q: "下列词语中，表示心情高兴的是（ ）。", options: ["兴高采烈", "悲痛欲绝", "怒气冲冲", "闷闷不乐"], answer: "兴高采烈", explain: "“兴高采烈”形容兴致高、精神饱满、心情愉快。" },
+    { id: "yw-108", type: "语文-基础知识", kind: "choice", q: "下列词语搭配正确的一项是（ ）。", options: ["改进错误", "改正错误", "改变错误", "改善错误"], answer: "改正错误", explain: "“改正错误”是正确搭配；错误应“改正”而非“改进/改变/改善”。" },
+    { id: "yw-109", type: "语文-基础知识", kind: "choice", q: "给句子加标点：你去过北京吗（ ）", options: ["？", "。", "，", "！"], answer: "？", explain: "表示疑问语气，句末用问号“？”。" },
+    { id: "yw-110", type: "语文-基础知识", kind: "choice", q: "“桃花潭水深千尺，不及汪伦送我情” 运用的修辞手法是（ ）。", options: ["夸张", "比喻", "拟人", "排比"], answer: "夸张", explain: "“深千尺”极力夸大水深，是夸张手法。" },
+    { id: "yw-111", type: "语文-基础知识", kind: "choice", q: "与“寒冷”意思相反的是（ ）。", options: ["炎热", "冷", "凉", "冻"], answer: "炎热", explain: "“炎热”与“寒冷”意思相反。" },
+    { id: "yw-112", type: "语文-基础知识", kind: "choice", q: "下列句子使用了排比修辞手法的是（ ）。", options: ["春天来了，花儿开了，草儿绿了，鸟儿唱了。", "他像一头牛。", "风儿轻轻地吹。", "太阳升起来了。"], answer: "春天来了，花儿开了，草儿绿了，鸟儿唱了。", explain: "三个及以上结构相似的短语连用，是排比。" }
+  ],
+  '古诗文': [
+    { id: "yw-201", type: "语文-古诗文", kind: "choice", q: "《宿建德江》的作者是（ ）。", options: ["孟浩然", "杜甫", "李白", "白居易"], answer: "孟浩然", explain: "《宿建德江》是唐代诗人孟浩然的作品。" },
+    { id: "yw-202", type: "语文-古诗文", kind: "choice", q: "《六月二十七日望湖楼醉书》的作者是（ ）。", options: ["苏轼", "辛弃疾", "王安石", "杜牧"], answer: "苏轼", explain: "该诗是宋代诗人苏轼所作。" },
+    { id: "yw-203", type: "语文-古诗文", kind: "choice", q: "《西江月·夜行黄沙道中》的作者是（ ）。", options: ["辛弃疾", "苏轼", "白居易", "王维"], answer: "辛弃疾", explain: "这是宋代词人辛弃疾的词作。" },
+    { id: "yw-204", type: "语文-古诗文", kind: "choice", q: "《浪淘沙》（其一）的作者是（ ）。", options: ["刘禹锡", "杜甫", "李白", "王之涣"], answer: "刘禹锡", explain: "《浪淘沙》是唐代诗人刘禹锡的作品。" },
+    { id: "yw-205", type: "语文-古诗文", kind: "choice", q: "《江南春》的作者是（ ）。", options: ["杜牧", "李商隐", "王维", "孟浩然"], answer: "杜牧", explain: "《江南春》是唐代诗人杜牧所作。" },
+    { id: "yw-206", type: "语文-古诗文", kind: "fill", q: "默写《宿建德江》：移舟泊烟渚，____。", options: null, answer: "日暮客愁新", explain: "原句：移舟泊烟渚，日暮客愁新。" },
+    { id: "yw-207", type: "语文-古诗文", kind: "fill", q: "默写《宿建德江》：野旷天低树，____。", options: null, answer: "江清月近人", explain: "原句：野旷天低树，江清月近人。" },
+    { id: "yw-208", type: "语文-古诗文", kind: "fill", q: "默写《六月二十七日望湖楼醉书》：黑云翻墨未遮山，____。", options: null, answer: "白雨跳珠乱入船", explain: "原句：黑云翻墨未遮山，白雨跳珠乱入船。" },
+    { id: "yw-209", type: "语文-古诗文", kind: "fill", q: "默写《六月二十七日望湖楼醉书》：____，望湖楼下水如天。", options: null, answer: "卷地风来忽吹散", explain: "原句：卷地风来忽吹散，望湖楼下水如天。" },
+    { id: "yw-210", type: "语文-古诗文", kind: "fill", q: "默写《西江月·夜行黄沙道中》：____，清风半夜鸣蝉。", options: null, answer: "明月别枝惊鹊", explain: "原句：明月别枝惊鹊，清风半夜鸣蝉。" },
+    { id: "yw-211", type: "语文-古诗文", kind: "fill", q: "默写《西江月·夜行黄沙道中》：稻花香里说丰年，____。", options: null, answer: "听取蛙声一片", explain: "原句：稻花香里说丰年，听取蛙声一片。" },
+    { id: "yw-212", type: "语文-古诗文", kind: "fill", q: "默写《浪淘沙》：九曲黄河万里沙，____。", options: null, answer: "浪淘风簸自天涯", explain: "原句：九曲黄河万里沙，浪淘风簸自天涯。" },
+    { id: "yw-213", type: "语文-古诗文", kind: "fill", q: "默写《江南春》：千里莺啼绿映红，____。", options: null, answer: "水村山郭酒旗风", explain: "原句：千里莺啼绿映红，水村山郭酒旗风。" },
+    { id: "yw-214", type: "语文-古诗文", kind: "fill", q: "默写《书湖阴先生壁》：一水护田将绿绕，____。", options: null, answer: "两山排闼送青来", explain: "原句：一水护田将绿绕，两山排闼送青来。" }
+  ],
+  '阅读理解': [
+    { id: "yw-301", type: "语文-阅读理解", kind: "choice", q: "《草原》的作者是（ ）。", options: ["老舍", "巴金", "茅盾", "冰心"], answer: "老舍", explain: "《草原》是老舍先生写的一篇散文。" },
+    { id: "yw-302", type: "语文-阅读理解", kind: "choice", q: "《穷人》的作者是（ ）。", options: ["列夫·托尔斯泰", "高尔基", "契诃夫", "屠格涅夫"], answer: "列夫·托尔斯泰", explain: "《穷人》是俄国作家列夫·托尔斯泰的作品。" },
+    { id: "yw-303", type: "语文-阅读理解", kind: "choice", q: "《少年闰土》的作者是（ ）。", options: ["鲁迅", "老舍", "巴金", "叶圣陶"], answer: "鲁迅", explain: "《少年闰土》节选自鲁迅的小说《故乡》。" },
+    { id: "yw-304", type: "语文-阅读理解", kind: "choice", q: "《月光曲》的作曲者是（ ）。", options: ["贝多芬", "莫扎特", "巴赫", "肖邦"], answer: "贝多芬", explain: "《月光曲》是德国作曲家贝多芬的作品。" },
+    { id: "yw-305", type: "语文-阅读理解", kind: "choice", q: "《开国大典》描写的历史事件发生在（ ）。", options: ["1949年", "1945年", "1950年", "1921年"], answer: "1949年", explain: "开国大典于 1949 年 10 月 1 日在北京举行。" },
+    { id: "yw-306", type: "语文-阅读理解", kind: "choice", q: "《狼牙山五壮士》中，五壮士的结局是（ ）。", options: ["英勇跳崖", "投降敌人", "安全撤退", "被敌人俘虏"], answer: "英勇跳崖", explain: "五壮士完成任务后将枪砸碎，英勇跳下悬崖。" },
+    { id: "yw-307", type: "语文-阅读理解", kind: "choice", q: "《桥》中舍己为人的“老汉”是（ ）。", options: ["村党支部书记", "村长", "老师", "医生"], answer: "村党支部书记", explain: "老汉是村里的党支部书记，最后把生的希望让给别人。" },
+    { id: "yw-308", type: "语文-阅读理解", kind: "choice", q: "《在柏林》中，老妇人反复数“一、二、三”是因为（ ）。", options: ["三个儿子都死在战场上", "她在数路边的树", "她在数车厢", "她喜欢数数"], answer: "三个儿子都死在战场上", explain: "老妇人的三个儿子都在战争中死去，她精神失常地数着他们。" },
+    { id: "yw-309", type: "语文-阅读理解", kind: "choice", q: "《宇宙生命之谜》是一篇（ ）。", options: ["说明文", "记叙文", "童话", "诗歌"], answer: "说明文", explain: "本文介绍了宇宙中生命存在的可能，属于说明文。" },
+    { id: "yw-310", type: "语文-阅读理解", kind: "choice", q: "《竹节人》的作者是（ ）。", options: ["范锡林", "宗璞", "老舍", "鲁迅"], answer: "范锡林", explain: "《竹节人》的作者是范锡林。" },
+    { id: "yw-311", type: "语文-阅读理解", kind: "choice", q: "《丁香结》的作者是（ ）。", options: ["宗璞", "冰心", "巴金", "叶圣陶"], answer: "宗璞", explain: "《丁香结》是宗璞的散文。" },
+    { id: "yw-312", type: "语文-阅读理解", kind: "choice", q: "“弯弯的金水河像一条玉带横贯东西” 这句话主要运用了（ ）的修辞手法。", options: ["比喻", "夸张", "排比", "对偶"], answer: "比喻", explain: "把金水河比作玉带，是比喻。" }
+  ]
+};
+const ENGLISH_BANK = {
+  '词汇': [
+    { id: "en-101", type: "英语-词汇", kind: "fill",   q: "根据中文写英文单词：苹果", options: null, answer: "apple", explain: "“苹果”的英文是 apple。" },
+    { id: "en-102", type: "英语-词汇", kind: "fill",   q: "根据中文写英文单词：学校", options: null, answer: "school", explain: "“学校”的英文是 school。" },
+    { id: "en-103", type: "英语-词汇", kind: "fill",   q: "根据中文写英文单词：快乐", options: null, answer: "happy", explain: "“快乐”的英文是 happy。" },
+    { id: "en-104", type: "英语-词汇", kind: "fill",   q: "根据中文写英文单词：书", options: null, answer: "book", explain: "“书”的英文是 book。" },
+    { id: "en-105", type: "英语-词汇", kind: "fill",   q: "根据中文写英文单词：水", options: null, answer: "water", explain: "“水”的英文是 water。" },
+    { id: "en-106", type: "英语-词汇", kind: "fill",   q: "根据中文写英文单词：红色", options: null, answer: "red", explain: "“红色”的英文是 red。" },
+    { id: "en-107", type: "英语-词汇", kind: "fill",   q: "根据中文写英文单词：猫", options: null, answer: "cat", explain: "“猫”的英文是 cat。" },
+    { id: "en-108", type: "英语-词汇", kind: "fill",   q: "根据中文写英文单词：跑", options: null, answer: "run", explain: "“跑”的英文是 run。" },
+    { id: "en-109", type: "英语-词汇", kind: "choice", q: "选出与 big（大的）意思相近的单词。", options: ["large", "small", "short", "tall"], answer: "large", explain: "large 与 big 都表示“大的”。" },
+    { id: "en-110", type: "英语-词汇", kind: "choice", q: "选出与 happy（快乐的）意思相反的单词。", options: ["sad", "glad", "fine", "nice"], answer: "sad", explain: "sad（悲伤的）与 happy（快乐的）意思相反。" },
+    { id: "en-111", type: "英语-词汇", kind: "choice", q: "选出表示“水”的单词。", options: ["water", "fire", "air", "earth"], answer: "water", explain: "water 表示“水”。" },
+    { id: "en-112", type: "英语-词汇", kind: "choice", q: "选出表示“跑”的单词。", options: ["run", "walk", "jump", "sit"], answer: "run", explain: "run 表示“跑”。" },
+    { id: "en-113", type: "英语-词汇", kind: "choice", q: "选出表示“红色”的单词。", options: ["red", "blue", "green", "yellow"], answer: "red", explain: "red 表示“红色”。" },
+    { id: "en-114", type: "英语-词汇", kind: "choice", q: "book 的中文意思是（ ）。", options: ["书", "笔", "包", "桌子"], answer: "书", explain: "book 的中文意思是“书”。" }
+  ],
+  '语法': [
+    { id: "en-201", type: "英语-语法", kind: "choice", q: "There ___ a book on the desk.", options: ["is", "are", "am", "be"], answer: "is", explain: "a book 是单数，there be 用 is。" },
+    { id: "en-202", type: "英语-语法", kind: "choice", q: "I have ___ apple.", options: ["an", "a", "the", "some"], answer: "an", explain: "apple 以元音音素开头，用 an。" },
+    { id: "en-203", type: "英语-语法", kind: "choice", q: "She is ___ teacher.", options: ["a", "an", "the", "one"], answer: "a", explain: "teacher 以辅音音素开头，用 a。" },
+    { id: "en-204", type: "英语-语法", kind: "choice", q: "The cat is ___ the box.", options: ["in", "on", "under", "at"], answer: "in", explain: "“在盒子里”用介词 in。" },
+    { id: "en-205", type: "英语-语法", kind: "choice", q: "We go to school ___ Monday.", options: ["on", "in", "at", "for"], answer: "on", explain: "星期前用介词 on。" },
+    { id: "en-206", type: "英语-语法", kind: "choice", q: "He ___ to school yesterday.", options: ["went", "go", "goes", "going"], answer: "went", explain: "yesterday 表示过去，用 go 的过去式 went。" },
+    { id: "en-207", type: "英语-语法", kind: "choice", q: "They ___ football every day.", options: ["play", "plays", "played", "playing"], answer: "play", explain: "they 是复数，一般现在时用 play。" },
+    { id: "en-208", type: "英语-语法", kind: "choice", q: "There ___ two dogs in the park.", options: ["are", "is", "am", "be"], answer: "are", explain: "two dogs 是复数，there be 用 are。" },
+    { id: "en-209", type: "英语-语法", kind: "choice", q: "I ___ a student.", options: ["am", "is", "are", "be"], answer: "am", explain: "I 与 am 搭配。" },
+    { id: "en-210", type: "英语-语法", kind: "choice", q: "The book is ___ the desk.", options: ["on", "in", "under", "at"], answer: "on", explain: "“在桌子上”用介词 on。" },
+    { id: "en-211", type: "英语-语法", kind: "choice", q: "He ___ TV every evening.", options: ["watches", "watch", "watched", "watching"], answer: "watches", explain: "he 是第三人称单数，一般现在时动词加 -es：watches。" },
+    { id: "en-212", type: "英语-语法", kind: "choice", q: "This is ___ orange.", options: ["an", "a", "the", "some"], answer: "an", explain: "orange 以元音音素开头，用 an。" }
+  ],
+  '阅读交际': [
+    { id: "en-301", type: "英语-阅读交际", kind: "choice", q: "A: Hello!  B: ___", options: ["Hello!", "Goodbye!", "Sorry.", "Thank you."], answer: "Hello!", explain: "别人说 Hello，应回答 Hello! 表示问候。" },
+    { id: "en-302", type: "英语-阅读交际", kind: "choice", q: "A: Thank you.  B: ___", options: ["You're welcome.", "I'm sorry.", "No.", "Goodbye."], answer: "You're welcome.", explain: "别人说谢谢，应回答 You're welcome.（不客气）。" },
+    { id: "en-303", type: "英语-阅读交际", kind: "choice", q: "A: How are you?  B: ___", options: ["I'm fine, thank you.", "I'm ten.", "It's red.", "I like apples."], answer: "I'm fine, thank you.", explain: "How are you? 询问身体状况，回答 I'm fine, thank you.。" },
+    { id: "en-304", type: "英语-阅读交际", kind: "choice", q: "A: What's your name?  B: ___", options: ["My name is Tom.", "I am seven.", "I like cats.", "It is a book."], answer: "My name is Tom.", explain: "问名字，回答 My name is ...。" },
+    { id: "en-305", type: "英语-阅读交际", kind: "choice", q: "A: Good morning!  B: ___", options: ["Good morning!", "Good night!", "Good afternoon!", "Goodbye!"], answer: "Good morning!", explain: "早上问候，回答 Good morning!。" },
+    { id: "en-306", type: "英语-阅读交际", kind: "choice", q: "A: Nice to meet you.  B: ___", options: ["Nice to meet you, too.", "Thank you.", "Me too.", "I'm fine."], answer: "Nice to meet you, too.", explain: "初次见面说 Nice to meet you，回答 Nice to meet you, too.。" },
+    { id: "en-307", type: "英语-阅读交际", kind: "choice", q: "A: Can I help you?  B: ___", options: ["Yes, please.", "No, I can't.", "I'm fine.", "Thank you."], answer: "Yes, please.", explain: "别人主动提供帮助，接受时说 Yes, please.。" },
+    { id: "en-308", type: "英语-阅读交际", kind: "choice", q: "A: I'm sorry.  B: ___", options: ["That's OK.", "Thank you.", "You're welcome.", "Goodbye."], answer: "That's OK.", explain: "别人道歉，回答 That's OK.（没关系）。" },
+    { id: "en-309", type: "英语-阅读交际", kind: "choice", q: "A: What colour is it?  B: ___", options: ["It's red.", "It's a cat.", "I'm ten.", "It is a book."], answer: "It's red.", explain: "问颜色，回答 It's + 颜色。" },
+    { id: "en-310", type: "英语-阅读交际", kind: "choice", q: "A: How old are you?  B: ___", options: ["I'm ten.", "I'm fine.", "It's blue.", "I like dogs."], answer: "I'm ten.", explain: "问年龄，回答 I'm + 数字。" },
+    { id: "en-311", type: "英语-阅读交际", kind: "choice", q: "阅读短文：Lucy is a girl. She likes apples. She has three apples. 问：What does Lucy like?", options: ["apples", "bananas", "oranges", "pears"], answer: "apples", explain: "文中说 She likes apples.。" },
+    { id: "en-312", type: "英语-阅读交际", kind: "choice", q: "阅读短文：It is Sunday. Tom and his father go to the park. They see a big dog. 问：Where do Tom and his father go?", options: ["the park", "the school", "the zoo", "the library"], answer: "the park", explain: "文中说 go to the park（去公园）。" }
+  ]
+};
+const ALL_BANKS = { '数学': QUESTION_BANK, '语文': YUWEN_BANK, '英语': ENGLISH_BANK };
+
+const CHAPTER_EMOJI = { '有理数': '🔢', '整式加减': '🧮', '一元一次方程': '⚖️', '线段与角': '📐', '基础知识': '📚', '古诗文': '📜', '阅读理解': '🔍', '词汇': '🔤', '语法': '📝', '阅读交际': '💬' };
+
+/* =====================================================================
+ * 纯函数区（无副作用，便于测试）
+ * ===================================================================== */
+
+// 标准化用户输入：去空格、转半角、小写（用于比较与解析）
+function normalizeInput(s) {
+  return String(s)
+    .replace(/[＀-￯]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); })
+    .replace(/　/g, ' ')
+    .replace(/\s+/g, '')
+    .toLowerCase();
+}
+
+// 解析「纯数值」（支持整数、小数、分数 1/2），不是数值返回 null
+function parseNum(s) {
+  s = String(s).trim();
+  if (/^-?\d+(\.\d+)?$/.test(s)) return Number(s);
+  const m = s.match(/^(-?\d+)\/(-?\d+)$/);
+  if (m) { const d = Number(m[2]); return d === 0 ? null : Number(m[1]) / d; }
+  return null;
+}
+
+// 从解方程答案中提取 x 的数值，例如 "x=5" 或 "5"
+function extractX(s) {
+  s = normalizeInput(s);
+  const m = s.match(/x=(-?[\d./]+)/);
+  if (m) return parseNum(m[1]);
+  return parseNum(s);
+}
+
+// 把代数项（如 3x^2y）解析为 {coeff, vars}；vars 为规范化后的字母串（含指数，按字母排序）
+function parseTermCoeff(term) {
+  let i = 0;
+  const n = term.length;
+  while (i < n && ((term[i] >= '0' && term[i] <= '9') || term[i] === '.' || term[i] === '/')) i++;
+  let coeff;
+  const coeffStr = term.slice(0, i);
+  if (coeffStr === '') coeff = 1;
+  else {
+    if (coeffStr.indexOf('/') >= 0) {
+      const parts = coeffStr.split('/');
+      coeff = Number(parts[0]) / Number(parts[1]);
+    } else coeff = Number(coeffStr);
+  }
+  const varsRaw = term.slice(i);
+  // 解析变量与指数，按字母排序得到规范形式
+  const varMap = {};
+  const re = /([a-zA-Z])(?:\^(\d+))?/g;
+  let mm;
+  while ((mm = re.exec(varsRaw)) !== null) {
+    const name = mm[1];
+    const exp = mm[2] ? Number(mm[2]) : 1;
+    varMap[name] = (varMap[name] || 0) + exp;
+  }
+  const sortedNames = Object.keys(varMap).sort();
+  let vars = '';
+  for (const name of sortedNames) {
+    const e = varMap[name];
+    vars += (e === 1) ? name : (name + '^' + e);
+  }
+  return { coeff: coeff, vars: vars };
+}
+
+// 把代数表达式规范为可比较的规范串（合并同类、按字母顺序），用于等价比较
+function toCanonicalAlgebra(str) {
+  let s = normalizeInput(str);
+  const terms = [];
+  let cur = '';
+  let sign = 1;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (ch === '+' || ch === '-') {
+      terms.push({ sign: sign, term: cur });
+      cur = '';
+      sign = (ch === '+') ? 1 : -1;
+    } else cur += ch;
+  }
+  terms.push({ sign: sign, term: cur });
+
+  const map = {};
+  for (const t of terms) {
+    if (t.term === '') continue;
+    let sgn = t.sign;
+    let termStr = t.term;
+    if (termStr[0] === '-') { sgn = -sgn; termStr = termStr.slice(1); }
+    const pc = parseTermCoeff(termStr);
+    map[pc.vars] = (map[pc.vars] || 0) + sgn * pc.coeff;
+  }
+  const entries = Object.entries(map).filter(function (e) { return e[1] !== 0; })
+    .sort(function (a, b) { return a[0].localeCompare(b[0]); });
+  if (entries.length === 0) return '0';
+  let out = '';
+  entries.forEach(function (e, idx) {
+    const k = e[0];
+    const v = e[1];
+    let termStr;
+    if (k === '') termStr = String(v);
+    else if (v === 1) termStr = k;
+    else if (v === -1) termStr = '-' + k;
+    else termStr = v + k;
+    if (idx === 0) out = termStr;
+    else out += (termStr[0] === '-') ? (' - ' + termStr.slice(1)) : (' + ' + termStr);
+  });
+  return out;
+}
+
+// 判分：返回布尔（核心纯函数）
+// - choice：比较选项文本
+// - calc：数值相等或代数式等价
+// - solve：比较 x 的解
+function gradeAnswer(userInput, question) {
+  if (userInput === null || userInput === undefined || String(userInput).trim() === '') return false;
+  if (question.kind === 'choice') {
+    return normalizeInput(userInput) === normalizeInput(question.answer);
+  }
+  if (question.kind === 'fill') {
+    return normalizeInput(userInput) === normalizeInput(question.answer);
+  }
+  const u = String(userInput).trim();
+  const a = String(question.answer).trim();
+  const un = parseNum(u), an = parseNum(a);
+  if (un !== null && an !== null) return Math.abs(un - an) < 1e-9;
+  if (question.kind === 'solve') {
+    const uv = extractX(u), av = extractX(a);
+    if (uv !== null && av !== null) return Math.abs(uv - av) < 1e-9;
+  }
+  return toCanonicalAlgebra(u) === toCanonicalAlgebra(a);
+}
+
+// 计算本次获得积分（核心纯函数）
+// 基础分 10/题；最大连对 streakMax≥3 时，超出的每题 +5；完成整章 +20
+function computePoints(correctCount, totalCount, streakMax, completedChapter) {
+  const base = correctCount * 10;
+  const combo = (streakMax >= 3) ? (streakMax - 2) * 5 : 0;
+  const bonus = completedChapter ? 20 : 0;
+  return base + combo + bonus;
+}
+
+// 薄弱点分析（核心纯函数）：输入错题 type 数组，返回薄弱类型与建议文本
+function analyzeWeakness(attemptWrongTypes) {
+  const count = {};
+  attemptWrongTypes.forEach(function (t) { count[t] = (count[t] || 0) + 1; });
+  const sorted = Object.entries(count).sort(function (a, b) { return b[1] - a[1]; });
+  const weakTypes = sorted.map(function (e) { return e[0]; });
+  const suggestions = sorted.slice(0, 4).map(function (e) {
+    return '你在「' + e[0] + '」类题目错了 ' + e[1] + ' 题，建议复习课本对应章节，并多做几道类似练习巩固。';
+  });
+  // 满足 PRD「2–4 条」：若整章只错同一类型，补一条通用学习建议，保证建议数 ≥ 2
+  if (weakTypes.length > 0 && suggestions.length < 2) {
+    suggestions.push('建议每天坚持做 10 分钟数学练习保持手感，遇到不懂的题型及时问老师或家长，把基础打牢。');
+  }
+  return { weakTypes: weakTypes, suggestions: suggestions };
+}
+
+// 日期格式化 YYYY-MM-DD HH:mm
+function formatDate(d) {
+  d = d || new Date();
+  const p = function (n) { return (n < 10 ? '0' : '') + n; };
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+}
+
+// 转义用户输入，防 XSS
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+/* =====================================================================
+ * 存储区（localStorage 持久化 + try-catch 安全回退到内存）
+ * ===================================================================== */
+const Store = (function () {
+  let mem = {};
+  let ok = true;
+  try { const t = '__t'; localStorage.setItem(t, t); localStorage.removeItem(t); }
+  catch (e) { ok = false; }
+  return {
+    get: function (k) { try { return ok ? localStorage.getItem(k) : (mem[k] != null ? mem[k] : null); } catch (e) { return mem[k] != null ? mem[k] : null; } },
+    set: function (k, v) { try { if (ok) localStorage.setItem(k, v); else mem[k] = v; } catch (e) { mem[k] = v; } }
+  };
+})();
+
+const HISTORY_KEY = 'koudou_math_history';
+const POINTS_KEY = 'koudou_math_points';
+
+function loadHistory() {
+  try {
+    const raw = Store.get(HISTORY_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) { return []; }
+}
+function saveHistory(list) {
+  try { Store.set(HISTORY_KEY, JSON.stringify(list)); } catch (e) { /* 忽略 */ }
+}
+function loadPoints() {
+  try {
+    const raw = Store.get(POINTS_KEY);
+    const n = raw == null ? 0 : parseInt(raw, 10);
+    return isNaN(n) ? 0 : n;
+  } catch (e) { return 0; }
+}
+function savePoints(n) {
+  try { Store.set(POINTS_KEY, String(n)); } catch (e) { /* 忽略 */ }
+}
+
+/* ----------------------------- 音效开关 存储 ----------------------------- */
+const SOUND_KEY = 'koudou_math_sound';
+function loadSoundOn() {
+  try { const r = Store.get(SOUND_KEY); return r == null ? true : r !== '0'; } catch (e) { return true; }
+}
+function saveSoundOn(v) { try { Store.set(SOUND_KEY, v ? '1' : '0'); } catch (e) {} }
+
+/* ----------------------------- 徽章 存储 ----------------------------- */
+const BADGES_KEY = 'koudou_math_badges';
+function loadBadges() {
+  try { const r = Store.get(BADGES_KEY); if (!r) return []; const a = JSON.parse(r); return Array.isArray(a) ? a : []; } catch (e) { return []; }
+}
+function saveBadges(arr) { try { Store.set(BADGES_KEY, JSON.stringify(arr)); } catch (e) {} }
+
+/* ----------------------------- 最大连对 / 错题复盘 存储 ----------------------------- */
+const MAXSTREAK_KEY = 'koudou_math_maxstreak';
+function loadMaxStreak() {
+  try { const r = Store.get(MAXSTREAK_KEY); const n = r == null ? 0 : parseInt(r, 10); return isNaN(n) ? 0 : n; } catch (e) { return 0; }
+}
+function saveMaxStreak(n) { try { Store.set(MAXSTREAK_KEY, String(n)); } catch (e) {} }
+const WRONGREVIEW_KEY = 'koudou_math_wrongreview';
+function loadWrongReview() { try { return Store.get(WRONGREVIEW_KEY) === '1'; } catch (e) { return false; } }
+function saveWrongReview(v) { try { Store.set(WRONGREVIEW_KEY, v ? '1' : '0'); } catch (e) {} }
+
+/* ----------------------------- 错题集 存储（localStorage 安全） ----------------------------- */
+const WRONG_KEY = 'koudou_math_wrong';
+function getWrongList() {
+  try { const r = Store.get(WRONG_KEY); if (!r) return []; const a = JSON.parse(r); return Array.isArray(a) ? a : []; } catch (e) { return []; }
+}
+// 录入/更新一条错题；同一 id 合并（保留最近一次错误）
+function addWrong(rec) {
+  try {
+    const list = getWrongList();
+    const item = {
+      id: rec.id,
+      module: rec.module || '数学',
+      chapter: rec.chapter,
+      q: rec.q,
+      userAnswer: rec.userAnswer,
+      correctAnswer: rec.correctAnswer,
+      explain: rec.explain,
+      type: rec.type,
+      kind: rec.kind || null,
+      options: rec.options || null,
+      date: rec.date || formatDate(new Date())
+    };
+    const idx = list.findIndex(function (w) { return w.id === item.id; });
+    if (idx >= 0) list[idx] = item; else list.push(item);
+    Store.set(WRONG_KEY, JSON.stringify(list));
+    return list;
+  } catch (e) { return getWrongList(); }
+}
+function removeWrong(id) {
+  try {
+    const list = getWrongList().filter(function (w) { return w.id !== id; });
+    Store.set(WRONG_KEY, JSON.stringify(list));
+    return list;
+  } catch (e) { return getWrongList(); }
+}
+function clearWrong() { try { Store.set(WRONG_KEY, '[]'); } catch (e) {} }
+
+/* ----------------------------- 音效（Web Audio 现场合成，零音频文件） ----------------------------- */
+let soundOn = loadSoundOn();
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    try { audioCtx = new AC(); } catch (e) { return null; }
+  }
+  return audioCtx;
+}
+// 单个振荡器音符
+function tone(ctx, freq, start, dur, type, peak) {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.setValueAtTime(freq, start);
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.exponentialRampToValueAtTime(peak || 0.2, start + 0.012);
+  gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.start(start); osc.stop(start + dur + 0.03);
+}
+// 现场合成短音：type ∈ 'correct' | 'wrong' | 'win' | 'badge'
+function playSound(type) {
+  if (!soundOn) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  try { if (ctx.state === 'suspended') ctx.resume(); } catch (e) {}
+  const t = ctx.currentTime;
+  if (type === 'correct') {
+    tone(ctx, 880, t, 0.12, 'triangle', 0.25);          // 上行清脆
+    tone(ctx, 1174.66, t + 0.10, 0.16, 'triangle', 0.22);
+  } else if (type === 'wrong') {
+    tone(ctx, 196, t, 0.18, 'sawtooth', 0.16);          // 低沉短音
+    tone(ctx, 146.83, t + 0.07, 0.22, 'square', 0.13);
+  } else if (type === 'win') {
+    const notes = [523.25, 659.25, 783.99, 1046.5];     // 欢快音阶 C-E-G-C
+    notes.forEach(function (f, i) { tone(ctx, f, t + i * 0.12, 0.18, 'triangle', 0.22); });
+  } else if (type === 'badge') {
+    const notes = [659.25, 880, 1046.5, 1318.5, 1567.98]; // 闪亮音阶
+    notes.forEach(function (f, i) { tone(ctx, f, t + i * 0.08, 0.14, 'sine', 0.2); });
+  }
+}
+// 首次用户交互后恢复 AudioContext（规避浏览器自动播放限制）
+function resumeAudioOnFirstInteraction() {
+  try { const ctx = getAudioCtx(); if (ctx && ctx.state === 'suspended') ctx.resume(); } catch (e) {}
+}
+document.addEventListener('pointerdown', resumeAudioOnFirstInteraction, { once: true });
+document.addEventListener('keydown', resumeAudioOnFirstInteraction, { once: true });
+
+/* ----------------------------- 徽章体系 ----------------------------- */
+const BADGES = [
+  { id: 'first_perfect',  emoji: '🥇', name: '首次满分', desc: '任意一章正确率达到 100%' },
+  { id: 'streak_master',  emoji: '🔥', name: '连对大师', desc: '单章内连续答对 ≥ 10 题' },
+  { id: 'all_clear',      emoji: '🏆', name: '全章通关', desc: '四个章节都至少完成过一次' },
+  { id: 'points_100',     emoji: '💯', name: '积分新秀', desc: '累计积分达到 100' },
+  { id: 'points_300',     emoji: '🏅', name: '积分高手', desc: '累计积分达到 300' },
+  { id: 'points_600',     emoji: '🎖️', name: '积分大师', desc: '累计积分达到 600' },
+  { id: 'wrong_review',   emoji: '📖', name: '错题复盘', desc: '重做错题集并全部答对' },
+  { id: 'full_marks_all', emoji: '🌟', name: '百发百中', desc: '四个章节都拿过满分' }
+];
+
+// 纯函数：根据状态计算「本次新解锁」的徽章（与已解锁集合做差集）
+// state: { history, pointsTotal, maxStreak, chaptersCompleted, wrongRetryAllCorrect, unlocked }
+function evaluateBadges(state) {
+  state = state || {};
+  const hist = state.history || [];
+  const earned = {};
+  const hasPerfect = hist.some(function (h) { return h.percent === 100; });
+  if (hasPerfect) earned.first_perfect = true;
+  if ((state.maxStreak || 0) >= 10) earned.streak_master = true;
+  const allChapters = Object.keys(QUESTION_BANK);
+  const doneChapters = new Set(state.chaptersCompleted || []);
+  if (allChapters.length > 0 && allChapters.every(function (c) { return doneChapters.has(c); })) earned.all_clear = true;
+  if ((state.pointsTotal || 0) >= 100) earned.points_100 = true;
+  if ((state.pointsTotal || 0) >= 300) earned.points_300 = true;
+  if ((state.pointsTotal || 0) >= 600) earned.points_600 = true;
+  if (state.wrongRetryAllCorrect) earned.wrong_review = true;
+  const perfectChapters = {};
+  hist.forEach(function (h) { if (h.percent === 100) perfectChapters[h.chapter] = true; });
+  if (allChapters.length > 0 && allChapters.every(function (c) { return perfectChapters[c]; })) earned.full_marks_all = true;
+
+  const unlocked = new Set(state.unlocked || []);
+  const newly = [];
+  BADGES.forEach(function (b) { if (earned[b.id] && !unlocked.has(b.id)) newly.push(b); });
+  return newly;
+}
+
+// 包装：加载当前状态 → 解锁新徽章 → 持久化 → 庆祝（保持 evaluateBadges 为纯函数）
+function checkAndUnlockBadges(extra) {
+  extra = extra || {};
+  const history = extra.history || loadHistory();
+  const pointsTotal = extra.pointsTotal != null ? extra.pointsTotal : loadPoints();
+  const maxStreak = extra.maxStreak != null ? extra.maxStreak : loadMaxStreak();
+  const chaptersCompleted = extra.chaptersCompleted || (function () {
+    const set = {};
+    history.forEach(function (h) { set[h.chapter] = true; });
+    return Object.keys(set);
+  })();
+  const wrongRetryAllCorrect = extra.wrongRetryAllCorrect != null ? extra.wrongRetryAllCorrect : loadWrongReview();
+  const unlocked = loadBadges();
+  const newBadges = evaluateBadges({
+    history: history, pointsTotal: pointsTotal, maxStreak: maxStreak,
+    chaptersCompleted: chaptersCompleted, wrongRetryAllCorrect: wrongRetryAllCorrect, unlocked: unlocked
+  });
+  if (newBadges.length) {
+    const merged = unlocked.slice();
+    newBadges.forEach(function (b) { if (merged.indexOf(b.id) < 0) merged.push(b.id); });
+    saveBadges(merged);
+    celebrateBadges(newBadges);
+  }
+  return newBadges;
+}
+
+// 新徽章庆祝（音效 + 动画）
+function celebrateBadges(badges) {
+  if (!badges || !badges.length) return;
+  try { playSound('badge'); } catch (e) {}
+  const overlay = document.createElement('div');
+  overlay.className = 'celebrate-overlay';
+  overlay.id = 'badgeCelebrate';
+  let cards = '';
+  badges.forEach(function (b) {
+    cards += '<div class="badge-pop">'
+      + '<div class="badge-emoji">' + b.emoji + '</div>'
+      + '<div class="badge-name">' + escapeHtml(b.name) + '</div>'
+      + '<div class="badge-desc">' + escapeHtml(b.desc) + '</div></div>';
+  });
+  overlay.innerHTML = '<div class="celebrate-card"><div class="celebrate-title">🎉 解锁新徽章！</div>'
+    + '<div class="badge-list">' + cards + '</div>'
+    + '<button class="btn blue" onclick="closeCelebrate()">太棒啦！</button></div>';
+  document.body.appendChild(overlay);
+}
+function closeCelebrate() {
+  const el = document.getElementById('badgeCelebrate');
+  if (el && el.parentNode) el.parentNode.removeChild(el);
+}
+
+/* =====================================================================
+ * 状态 + 渲染区
+ * ===================================================================== */
+const ENCOURAGE = ['太棒了！👍', '答对啦，真聪明！🌟', '厉害！继续加油！💪', '全对，你是数学小能手！🎉', '完美！👏'];
+
+const state = {
+  module: '数学',
+  chapter: null,
+  questions: [],
+  idx: 0,
+  answers: [],      // 每题用户输入
+  graded: [],       // 每题是否已判分 {correct}
+  selectedOpt: [],  // 选择题当前选中
+  result: null      // 提交后的结果对象
+};
+
+const app = document.getElementById('app');
+
+function updatePoints() {
+  document.getElementById('pointsPill').textContent = '我的积分：' + loadPoints();
+}
+
+// 模块切换
+function onModule(name) {
+  const m = MODULES[name];
+  state.module = name;
+  // 更新 tab 高亮
+  const btns = document.querySelectorAll('#moduleTabs .tab-btn');
+  btns.forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-module') === name); });
+  if (!m || !m.ready) { renderComingSoon(name); return; }
+  renderChapters();
+}
+
+function renderComingSoon(name) {
+  app.innerHTML = '<div class="card"><div class="coming-soon">🚧 ' + escapeHtml(name) + ' 模块敬请期待 🚧<br><span style="font-size:18px;color:#aaa;">我们正在努力准备中，先来玩数学吧！</span></div></div>';
+}
+
+// 章节选择页
+function renderChapters() {
+  state.chapter = null; state.result = null;
+  const names = Object.keys(ALL_BANKS[state.module]);
+  let html = '<div class="card"><h2>' + (state.module === '语文' ? '📖 语文' : state.module === '英语' ? '🔤 英语' : '🔢 数学') + ' · 选择章节</h2><div class="subtitle">挑一个章节开始练习吧！</div><div class="chapter-grid">';
+  names.forEach(function (name, i) {
+    const cnt = ALL_BANKS[state.module][name].length;
+    html += '<button class="chapter-btn c' + (i + 1) + '" onclick="startChapter(\'' + name + '\')">'
+      + '<span class="emoji">' + CHAPTER_EMOJI[name] + '</span>' + escapeHtml(name)
+      + '<span style="font-size:15px;opacity:.9;">共 ' + cnt + ' 题</span></button>';
+  });
+  html += '</div></div>';
+  html += '<div class="btn-row"><button class="btn yellow" onclick="renderScores()">🏆 我的成绩</button></div>';
+  html += navButtonsHtml();
+  app.innerHTML = html;
+}
+
+// 开始某章节
+function startChapter(name) {
+  state.chapter = name;
+  state.questions = ALL_BANKS[state.module][name];
+  state.idx = 0;
+  state.answers = new Array(state.questions.length).fill('');
+  state.selectedOpt = new Array(state.questions.length).fill(null);
+  state.graded = new Array(state.questions.length).fill(null);
+  state.result = null;
+  renderQuestion();
+}
+
+// 渲染单题
+function renderQuestion() {
+  const q = state.questions[state.idx];
+  const total = state.questions.length;
+  const doneCount = state.graded.filter(function (g) { return g !== null; }).length;
+  const pct = Math.round((doneCount / total) * 100);
+
+  let body = '';
+  if (q.kind === 'choice') {
+    body += '<div class="options">';
+    q.options.forEach(function (opt, oi) {
+      const sel = state.selectedOpt[state.idx] === oi ? ' selected' : '';
+      body += '<button class="opt-btn' + sel + '" onclick="selectOption(' + oi + ')">' + escapeHtml(opt) + '</button>';
+    });
+    body += '</div>';
+  } else {
+    body += '<input class="answer-input" id="ansInput" placeholder="在这里输入答案…" value="' + escapeHtml(state.answers[state.idx]) + '" oninput="onInput(this.value)" />';
+  }
+
+  // 反馈区
+  let fb = '';
+  const g = state.graded[state.idx];
+  if (g !== null) {
+    if (g.correct) {
+      fb = '<div class="feedback ok">✅ ' + ENCOURAGE[state.idx % ENCOURAGE.length] + '</div>';
+    } else {
+      fb = '<div class="feedback no shake">❌ 正确答案：' + escapeHtml(q.answer) + '<br><span style="font-weight:400;font-size:18px;">💡 ' + escapeHtml(q.explain) + '</span></div>';
+    }
+  }
+
+  const prevDisabled = state.idx === 0 ? 'disabled' : '';
+  const nextDisabled = state.idx === total - 1 ? 'disabled' : '';
+  const checkLabel = g !== null ? '再看一遍' : '检查答案';
+
+  let html = '<div class="card">';
+  html += '<div class="q-meta">📘 ' + escapeHtml(state.chapter) + ' · 题型：' + escapeHtml(q.type) + ' · 第 ' + (state.idx + 1) + ' / ' + total + ' 题</div>';
+  html += '<div class="progress-wrap"><div class="progress-bar" style="width:' + pct + '%"></div></div>';
+  html += '<div class="progress-label">闯关进度 ' + pct + '%</div>';
+  html += '<div class="q-text">' + escapeHtml(q.q) + '</div>';
+  html += body;
+  html += fb;
+  html += '<div class="btn-row">';
+  html += '<button class="btn ghost" ' + prevDisabled + ' onclick="prevQ()">⬅️ 上一题</button>';
+  html += '<button class="btn blue" onclick="checkAnswer()">' + checkLabel + '</button>';
+  html += '<button class="btn ghost" ' + nextDisabled + ' onclick="nextQ()">下一题 ➡️</button>';
+  html += '</div></div>';
+  html += '<div class="btn-row">';
+  html += '<button class="btn pink" onclick="submitChapter()">📝 提交本试卷</button>';
+  html += '<button class="btn yellow" onclick="restartChapter()">🔄 重做</button>';
+  html += '<button class="btn ghost" onclick="renderChapters()">🏠 返回章节</button>';
+  html += '</div>';
+
+  app.innerHTML = html;
+  if (q.kind !== 'choice') {
+    const inp = document.getElementById('ansInput');
+    if (inp) inp.focus();
+  }
+}
+
+function onInput(v) { state.answers[state.idx] = v; }
+
+function selectOption(oi) {
+  state.selectedOpt[state.idx] = oi;
+  state.answers[state.idx] = state.questions[state.idx].options[oi];
+  renderQuestion();
+}
+
+function checkAnswer() {
+  const q = state.questions[state.idx];
+  const val = state.answers[state.idx];
+  if (val === '' || val == null) {
+    app.insertAdjacentHTML('beforeend', '<div class="feedback no" style="margin-top:12px;">⚠️ 请先作答再检查哦～</div>');
+    return;
+  }
+  const correct = gradeAnswer(val, q);
+  state.graded[state.idx] = { correct: correct };
+  try { playSound(correct ? 'correct' : 'wrong'); } catch (e) {}
+  renderQuestion();
+}
+
+function prevQ() { if (state.idx > 0) { state.idx--; renderQuestion(); } }
+function nextQ() { if (state.idx < state.questions.length - 1) { state.idx++; renderQuestion(); } }
+
+function restartChapter() { startChapter(state.chapter); }
+
+// 提交整章
+function submitChapter() {
+  let correct = 0;
+  let streak = 0;
+  let streakMax = 0;
+  const wrongTypes = [];
+  for (let i = 0; i < state.questions.length; i++) {
+    const q = state.questions[i];
+    const val = state.answers[i];
+    let g = state.graded[i];
+    if (!g) { // 未检查的直接判分
+      g = { correct: gradeAnswer(val, q) };
+      state.graded[i] = g;
+    }
+    if (g.correct) { correct++; streak++; if (streak > streakMax) streakMax = streak; }
+    else {
+      streak = 0; wrongTypes.push(q.type);
+      // 答错的题自动录入错题集（按 id 合并，保留最近一次错误）
+      addWrong({
+        id: q.id, module: state.module, chapter: state.chapter,
+        q: q.q, userAnswer: val, correctAnswer: q.answer, explain: q.explain,
+        type: q.type, kind: q.kind, options: q.options
+      });
+    }
+  }
+  const total = state.questions.length;
+  const earned = computePoints(correct, total, streakMax, true);
+  const newTotal = loadPoints() + earned;
+  savePoints(newTotal);
+  updatePoints();
+
+  // 更新全局最大连对（用于「连对大师」徽章）
+  const prevMax = loadMaxStreak();
+  if (streakMax > prevMax) saveMaxStreak(streakMax);
+
+  // 记录历史
+  const history = loadHistory();
+  const record = {
+    date: formatDate(new Date()),
+    chapter: state.chapter,
+    correct: correct,
+    total: total,
+    percent: Math.round((correct / total) * 100),
+    earned: earned
+  };
+  history.unshift(record);
+  if (history.length > 50) history.length = 50; // 最多保留 50 条
+  saveHistory(history);
+
+  // 薄弱点
+  const weakness = analyzeWeakness(wrongTypes);
+
+  state.result = { correct: correct, total: total, earned: earned, weakness: weakness, wrongTypes: wrongTypes };
+
+  // 章节完成音效 + 徽章解锁检查
+  try { playSound('win'); } catch (e) {}
+  checkAndUnlockBadges();
+
+  renderResult();
+}
+
+function renderResult() {
+  const r = state.result;
+  const pct = Math.round((r.correct / r.total) * 100);
+  let html = '<div class="card">';
+  html += '<h2>🎉 ' + escapeHtml(state.chapter) + ' 练习完成！</h2>';
+  html += '<div class="score-big">' + pct + ' 分</div>';
+  html += '<div style="text-align:center;font-size:22px;">答对 ' + r.correct + ' / ' + r.total + ' 题</div>';
+  html += '<div style="text-align:center;font-size:22px;color:var(--green-dark);margin-top:8px;">🪙 本次获得积分：+' + r.earned + '</div>';
+
+  // 薄弱点建议（基于真实错题数据）
+  html += '<h2 style="margin-top:20px;font-size:24px;">💡 薄弱点建议</h2>';
+  if (r.weakness.suggestions.length === 0) {
+    html += '<div class="suggest-item">🌟 太厉害了！本章全部答对，没有发现薄弱点，继续保持！</div>';
+  } else {
+    r.weakness.suggestions.forEach(function (s) {
+      html += '<div class="suggest-item">' + escapeHtml(s) + '</div>';
+    });
+  }
+
+  html += '<div class="btn-row">';
+  html += '<button class="btn pink" onclick="restartChapter()">🔄 再练一次</button>';
+  html += '<button class="btn blue" onclick="renderChapters()">📚 其他章节</button>';
+  html += '<button class="btn yellow" onclick="renderScores()">🏆 我的成绩</button>';
+  html += '</div>';
+  html += navButtonsHtml();
+  html += '</div>';
+
+  app.innerHTML = html;
+}
+
+// 我的成绩页（历史 + 趋势）
+function renderScores() {
+  const history = loadHistory();
+  let html = '<div class="card"><h2>🏆 我的成绩</h2>';
+  if (history.length === 0) {
+    html += '<div class="subtitle">还没有成绩记录，去练习一章吧！</div>';
+  } else {
+    html += '<ul class="history-list">';
+    history.forEach(function (h) {
+      html += '<li class="history-item">';
+      html += '<div>📅 ' + escapeHtml(h.date) + ' · 📘 ' + escapeHtml(h.chapter)
+        + ' · 得分 <b>' + h.percent + '分</b>（' + h.correct + '/' + h.total + '） · 🪙 +' + h.earned + '</div>';
+      html += '<div class="progress-wrap" style="margin-top:8px;"><div class="trend-bar" style="width:' + h.percent + '%"></div></div>';
+      html += '</li>';
+    });
+    html += '</ul>';
+  }
+  html += navButtonsHtml();
+  html += '<div class="btn-row"><button class="btn ghost" onclick="renderChapters()">🏠 返回</button></div>';
+  html += '</div>';
+  app.innerHTML = html;
+}
+
+/* ----------------------------- 通用导航按钮 ----------------------------- */
+function navButtonsHtml() {
+  return '<div class="btn-row">'
+    + '<button class="btn pink" onclick="renderBadges()">🏅 我的徽章</button>'
+    + '<button class="btn ghost" onclick="renderWrong()">📕 错题集</button>'
+    + '<button class="btn yellow" onclick="renderSettings()">⚙️ 设置</button>'
+    + '<button class="btn blue" onclick="openUploadModal()">📥 上传题库</button>'
+    + '</div>';
+}
+
+/* ----------------------------- 我的徽章 展示墙 ----------------------------- */
+function renderBadges() {
+  const unlocked = loadBadges();
+  const unlockedSet = new Set(unlocked);
+  let html = '<div class="card"><h2>🏅 我的徽章</h2><div class="subtitle">继续练习，解锁更多成就！</div><div class="badge-wall">';
+  BADGES.forEach(function (b) {
+    const got = unlockedSet.has(b.id);
+    html += '<div class="badge-item' + (got ? '' : ' locked') + '">'
+      + '<div class="badge-emoji">' + (got ? b.emoji : '🔒') + '</div>'
+      + '<div class="badge-name">' + escapeHtml(b.name) + '</div>'
+      + '<div class="badge-desc">' + escapeHtml(b.desc) + '</div></div>';
+  });
+  html += '</div></div>';
+  html += navButtonsHtml();
+  html += '<div class="btn-row"><button class="btn ghost" onclick="renderChapters()">🏠 返回首页</button></div>';
+  app.innerHTML = html;
+}
+
+/* ----------------------------- 错题集 页面 ----------------------------- */
+function renderWrong() {
+  const list = getWrongList();
+  let html = '<div class="card"><h2>📕 错题集</h2>';
+  if (list.length === 0) {
+    html += '<div class="subtitle">还没有错题，太棒啦！做错的题目会自动收集到这里。</div>';
+  } else {
+    html += '<div class="subtitle">共 ' + list.length + ' 道错题。点「重做本题」复习，答对就会移除～</div>';
+    html += '<div class="wrong-list">';
+    list.forEach(function (w) {
+      html += '<div class="wrong-item">';
+      html += '<div class="wrong-meta">📘 ' + escapeHtml(w.chapter) + ' · 🏷️ ' + escapeHtml(w.type) + ' · 🕒 ' + escapeHtml(w.date) + '</div>';
+      html += '<div class="wrong-q">' + escapeHtml(w.q) + '</div>';
+      html += '<div class="wrong-ans">✏️ 你的答案：' + escapeHtml(w.userAnswer) + '　✅ 正确答案：' + escapeHtml(w.correctAnswer) + '</div>';
+      html += '<div class="wrong-explain">💡 ' + escapeHtml(w.explain) + '</div>';
+      html += '<div class="btn-row">'
+        + '<button class="btn blue" onclick="startRetry(\'' + escapeHtml(w.id) + '\')">🔁 重做本题</button>'
+        + '<button class="btn ghost" onclick="removeWrongAndRefresh(\'' + escapeHtml(w.id) + '\')">🗑️ 移除</button>'
+        + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '<div class="btn-row"><button class="btn pink" onclick="confirmClearWrong()">🧹 清空错题集</button></div>';
+  }
+  html += '</div>';
+  html += navButtonsHtml();
+  html += '<div class="btn-row"><button class="btn ghost" onclick="renderChapters()">🏠 返回首页</button></div>';
+  app.innerHTML = html;
+}
+
+function removeWrongAndRefresh(id) { removeWrong(id); renderWrong(); }
+
+function confirmClearWrong() {
+  const ok = window.confirm('确定要清空全部错题集吗？此操作不可恢复。');
+  if (!ok) return;
+  clearWrong();
+  renderWrong();
+}
+
+/* ----------------------------- 错题重做 流程 ----------------------------- */
+const retryState = { id: null, q: null, chapter: null, answer: '', selected: null, graded: null };
+
+function startRetry(id) {
+  const list = getWrongList();
+  const w = list.find(function (x) { return x.id === id; });
+  if (!w) { renderWrong(); return; }
+  retryState.id = id;
+  retryState.chapter = w.chapter;
+  retryState.q = {
+    id: w.id, type: w.type, kind: w.kind, q: w.q,
+    options: w.options, answer: w.correctAnswer, explain: w.explain
+  };
+  retryState.answer = '';
+  retryState.selected = null;
+  retryState.graded = null;
+  renderRetry();
+}
+
+function renderRetry() {
+  const q = retryState.q;
+  let body = '';
+  if (q.kind === 'choice' && q.options) {
+    body += '<div class="options">';
+    q.options.forEach(function (opt, oi) {
+      const sel = (retryState.selected === oi) ? ' selected' : '';
+      body += '<button class="opt-btn' + sel + '" onclick="selectRetryOpt(' + oi + ')">' + escapeHtml(opt) + '</button>';
+    });
+    body += '</div>';
+  } else {
+    body += '<input class="answer-input" id="retryInput" placeholder="在这里输入答案…" value="' + escapeHtml(retryState.answer || '') + '" oninput="onRetryInput(this.value)" />';
+  }
+
+  let fb = '';
+  if (retryState.graded !== null && retryState.graded !== undefined) {
+    if (retryState.graded) {
+      fb = '<div class="feedback ok">✅ 答对啦！已掌握，从错题集移除～</div>';
+    } else {
+      fb = '<div class="feedback no shake">❌ 再看看，正确答案：' + escapeHtml(q.answer)
+        + '<br><span style="font-weight:400;font-size:18px;">💡 ' + escapeHtml(q.explain) + '</span></div>';
+    }
+  }
+
+  let html = '<div class="card">';
+  html += '<div class="q-meta">📕 错题重做 · 📘 ' + escapeHtml(retryState.chapter) + ' · 题型：' + escapeHtml(q.type) + '</div>';
+  html += '<div class="q-text">' + escapeHtml(q.q) + '</div>';
+  html += body;
+  html += fb;
+  html += '<div class="btn-row">';
+  html += '<button class="btn blue" onclick="checkRetry()">检查答案</button>';
+  html += '<button class="btn ghost" onclick="renderWrong()">返回错题集</button>';
+  html += '</div></div>';
+  app.innerHTML = html;
+  if (!(q.kind === 'choice' && q.options)) {
+    const inp = document.getElementById('retryInput');
+    if (inp) inp.focus();
+  }
+}
+
+function onRetryInput(v) { retryState.answer = v; }
+function selectRetryOpt(oi) {
+  retryState.selected = oi;
+  retryState.answer = retryState.q.options[oi];
+  renderRetry();
+}
+function checkRetry() {
+  const q = retryState.q;
+  const val = retryState.answer;
+  if (val === '' || val == null) {
+    app.insertAdjacentHTML('beforeend', '<div class="feedback no" style="margin-top:12px;">⚠️ 请先作答再检查哦～</div>');
+    return;
+  }
+  const correct = gradeAnswer(val, q);
+  retryState.graded = correct;
+  if (correct) {
+    try { playSound('correct'); } catch (e) {}
+    removeWrong(retryState.id);
+    // 若清空后错题集为空（且此前有错题），标记「错题复盘」成就
+    if (getWrongList().length === 0) {
+      saveWrongReview(true);
+      checkAndUnlockBadges({ wrongRetryAllCorrect: true });
+    }
+    renderRetry();
+  } else {
+    try { playSound('wrong'); } catch (e) {}
+    // 更新该错题记录（保留最近一次错误）
+    const w = getWrongList().find(function (x) { return x.id === retryState.id; });
+    if (w) addWrong({ id: w.id, module: w.module, chapter: w.chapter, q: w.q, userAnswer: val, correctAnswer: w.correctAnswer, explain: w.explain, type: w.type, kind: w.kind, options: w.options, date: formatDate(new Date()) });
+    renderRetry();
+  }
+}
+
+/* ----------------------------- 设置 页面 ----------------------------- */
+function renderSettings() {
+  let html = '<div class="card"><h2>⚙️ 设置</h2>';
+  html += '<div class="subtitle">个性化你的学习小程序</div>';
+  html += '<div class="setting-row"><span>🔊 音效</span>'
+    + '<button class="btn ' + (soundOn ? 'blue' : 'ghost') + '" onclick="toggleSound()">' + (soundOn ? '开启中 🔊' : '已关闭 🔇') + '</button></div>';
+  html += '<div class="setting-row"><span>🧹 清空错题集</span>'
+    + '<button class="btn pink" onclick="confirmClearWrong()">清空</button></div>';
+  html += '<div class="setting-row"><span>♻️ 清空全部学习数据</span>'
+    + '<button class="btn ghost" onclick="confirmResetAll()">重置</button></div>';
+  html += '</div>';
+  html += navButtonsHtml();
+  html += '<div class="btn-row"><button class="btn ghost" onclick="renderChapters()">🏠 返回首页</button></div>';
+  app.innerHTML = html;
+}
+function toggleSound() {
+  soundOn = !soundOn;
+  saveSoundOn(soundOn);
+  if (soundOn) { try { playSound('correct'); } catch (e) {} }
+  renderSettings();
+}
+function confirmResetAll() {
+  const ok = window.confirm('确定清空全部成绩、积分、徽章和错题集吗？此操作不可恢复。');
+  if (!ok) return;
+  try {
+    saveHistory([]); savePoints(0); saveBadges([]); saveMaxStreak(0); saveWrongReview(false); clearWrong();
+    updatePoints();
+  } catch (e) {}
+  renderSettings();
+}
+
+/* =========================================================================
+ * 上传题库（增量功能）：解析 / 合并 / 持久化 / 非结构化降级
+ * - 结构化：JSON / CSV / TSV / Excel（离线或懒加载）
+ * - 非结构化：PDF / Word / 图片（懒加载后启发式切题 + 降级 UX）
+ * 所有 CDN 库运行时注入，不写进 <head>，保住单内联 <script> 块。
+ * ========================================================================= */
+const UPLOAD_KEY = 'koudou_upload_banks_v1';
+const __LIB_CACHE = {};
+let __pendingUpload = null;
+
+/* ----------------------------- CDN 懒加载（运行时注入） ----------------------------- */
+function loadLib(name) {
+  if (__LIB_CACHE[name]) return __LIB_CACHE[name];
+  const urls = {
+    xlsx: 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',
+    pdfjs: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js',
+    mammoth: 'https://cdn.jsdelivr.net/npm/mammoth@1.7.0/mammoth.browser.min.js',
+    tesseract: 'https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js'
+  };
+  const url = urls[name];
+  if (!url) return Promise.reject(new Error('unknown lib: ' + name));
+  const p = new Promise(function (resolve, reject) {
+    const s = document.createElement('script');
+    s.src = url;
+    s.onload = function () { resolve(); };
+    s.onerror = function () { reject(new Error('failed to load ' + name)); };
+    const head = (document && document.head) ? document.head : (document && document.body ? document.body : document);
+    head.appendChild(s);
+  });
+  __LIB_CACHE[name] = p;
+  return p;
+}
+
+/* ----------------------------- 单题校验 / 规范化 ----------------------------- */
+function validateQuestion(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const q = (raw.q === undefined || raw.q === null) ? '' : String(raw.q).trim();
+  const answer = (raw.answer === undefined || raw.answer === null) ? '' : String(raw.answer).trim();
+  if (q === '' || answer === '') return null;
+  let kind = raw.kind;
+  if (kind === undefined || kind === null || kind === '') {
+    kind = Array.isArray(raw.options) ? 'choice' : 'fill';
+  }
+  let options = raw.options;
+  if (options !== undefined && options !== null && !Array.isArray(options)) options = null;
+  return {
+    id: raw.id != null ? String(raw.id) : ('up-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6)),
+    type: raw.type != null ? String(raw.type) : '',
+    kind: kind,
+    q: q,
+    options: options,
+    answer: answer,
+    explain: raw.explain != null ? String(raw.explain) : ''
+  };
+}
+
+/* ----------------------------- CSV / TSV 解析 ----------------------------- */
+function splitCsvLine(line, delim) {
+  const out = [];
+  let cur = '';
+  let inQ = false;
+  const d = delim || ',';
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (inQ) {
+      if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+      else if (c === '"') inQ = false;
+      else cur += c;
+    } else if (c === '"') inQ = true;
+    else if (c === d) { out.push(cur); cur = ''; }
+    else cur += c;
+  }
+  out.push(cur);
+  return out;
+}
+
+function parseTableRows(text, delim) {
+  const out = [];
+  const lines = String(text).split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].trim() === '') continue;
+    out.push(splitCsvLine(lines[i], delim));
+  }
+  return out;
+}
+
+const TABLE_COLS = ['module', 'chapter', 'type', 'kind', 'q', 'options', 'answer', 'explain'];
+
+function rowsToQuestions(rows) {
+  const out = {};
+  if (!rows || !rows.length) return out;
+  const first = rows[0].map(function (s) { return String(s).trim().toLowerCase(); });
+  const looksHeader = first.indexOf('q') >= 0 && first.indexOf('answer') >= 0 && (first.indexOf('module') >= 0 || first.indexOf('chapter') >= 0);
+  const dataRows = looksHeader ? rows.slice(1) : rows;
+  dataRows.forEach(function (cols) {
+    const raw = {};
+    TABLE_COLS.forEach(function (key, idx) { raw[key] = (cols[idx] !== undefined ? cols[idx] : ''); });
+    const mod = String(raw.module || '').trim() || '数学';
+    const ch = String(raw.chapter || '').trim() || '上传暂存';
+    if (raw.options) {
+      const opts = String(raw.options).split(/\s*[|;]\s*/).map(function (s) { return s.trim(); }).filter(function (s) { return s.length > 0; });
+      raw.options = opts.length ? opts : null;
+    } else { raw.options = null; }
+    const q = validateQuestion(raw);
+    if (!q) return;
+    if (!out[mod]) out[mod] = {};
+    if (!out[mod][ch]) out[mod][ch] = [];
+    out[mod][ch].push(q);
+  });
+  return out;
+}
+
+function csvToQuestions(text, delim) {
+  return rowsToQuestions(parseTableRows(text, delim || ','));
+}
+
+/* ----------------------------- JSON 解析 ----------------------------- */
+function jsonToQuestions(obj) {
+  const out = {};
+  if (Array.isArray(obj)) {
+    const mod = (typeof state !== 'undefined' && state && state.module) ? state.module : '数学';
+    const list = [];
+    obj.forEach(function (raw) { const q = validateQuestion(raw); if (q) list.push(q); });
+    if (list.length) out[mod] = { '上传暂存': list };
+    return out;
+  }
+  if (obj && typeof obj === 'object') {
+    for (const mod in obj) {
+      const chapters = obj[mod];
+      if (!chapters || typeof chapters !== 'object') continue;
+      for (const ch in chapters) {
+        const arr = chapters[ch];
+        if (!Array.isArray(arr)) continue;
+        const list = [];
+        arr.forEach(function (raw) { const q = validateQuestion(raw); if (q) list.push(q); });
+        if (list.length) {
+          if (!out[mod]) out[mod] = {};
+          out[mod][ch] = list;
+        }
+      }
+    }
+  }
+  return out;
+}
+
+/* ----------------------------- Excel 解析（懒加载 SheetJS） ----------------------------- */
+function xlsxToQuestions(arrayBuffer) {
+  const XLSX = window.XLSX;
+  const wb = XLSX.read(arrayBuffer, { type: 'array' });
+  const name = wb.SheetNames[0];
+  const ws = wb.Sheets[name];
+  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+  return rowsToQuestions(rows);
+}
+
+/* ----------------------------- id 去重 ----------------------------- */
+function dedupeId(mod, ch, q, seen) {
+  const existing = (ALL_BANKS[mod] && ALL_BANKS[mod][ch]) ? ALL_BANKS[mod][ch].map(function (x) { return x.id; }) : [];
+  const ids = new Set(existing);
+  if (seen) seen.forEach(function (id) { ids.add(id); });
+  let id = q.id || ('up-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6));
+  let n = 1;
+  const base = id;
+  while (ids.has(id)) { id = base + '-u' + (n++); }
+  return Object.assign({}, q, { id: id });
+}
+
+/* ----------------------------- 合并到运行时题库 ----------------------------- */
+function applyQuestions(parsed) {
+  if (!parsed || typeof parsed !== 'object') return;
+  for (const mod in parsed) {
+    if (!ALL_BANKS[mod]) continue;
+    const chapters = parsed[mod];
+    if (!chapters || typeof chapters !== 'object') continue;
+    for (const ch in chapters) {
+      const arr = chapters[ch];
+      if (!Array.isArray(arr)) continue;
+      if (!ALL_BANKS[mod][ch]) ALL_BANKS[mod][ch] = [];
+      const seen = new Set();
+      arr.forEach(function (raw) {
+        const q = dedupeId(mod, ch, raw, seen);
+        seen.add(q.id);
+        ALL_BANKS[mod][ch].push(q);
+      });
+    }
+  }
+}
+
+/* ----------------------------- 持久化（独立键，复用 Store） ----------------------------- */
+function saveUploaded(parsed) {
+  try {
+    const cur = loadUploaded() || {};
+    if (parsed && typeof parsed === 'object') {
+      for (const mod in parsed) {
+        if (!cur[mod]) cur[mod] = {};
+        const chapters = parsed[mod];
+        if (chapters && typeof chapters === 'object') {
+          for (const ch in chapters) {
+            if (!Array.isArray(chapters[ch])) continue;
+            if (!cur[mod][ch]) cur[mod][ch] = [];
+            chapters[ch].forEach(function (q) { cur[mod][ch].push(q); });
+          }
+        }
+      }
+    }
+    Store.set(UPLOAD_KEY, JSON.stringify(cur));
+  } catch (e) {}
+}
+
+function loadUploaded() {
+  try { const r = Store.get(UPLOAD_KEY); return r ? JSON.parse(r) : null; } catch (e) { return null; }
+}
+
+/* ----------------------------- 合并解析结果（内部） ----------------------------- */
+function mergeParsed(target, src) {
+  if (!src || typeof src !== 'object') return;
+  for (const mod in src) {
+    if (!target[mod]) target[mod] = {};
+    for (const ch in src[mod]) {
+      if (!target[mod][ch]) target[mod][ch] = [];
+      src[mod][ch].forEach(function (q) { target[mod][ch].push(q); });
+    }
+  }
+}
+
+/* ----------------------------- 启发式切题（非结构化文本） ----------------------------- */
+function heuristicSplit(text) {
+  if (!text) return [];
+  const lines = String(text).split(/\r?\n/);
+  const qAnchor = /^\s*(?:第?\s*\d+\s*[:题、.）)]|（?\d+[)、.]|[一二三四五六七八九十百]+[、.、])/;
+  const optAnchor = /^([A-Da-d])[.、)]\s*/;
+  const ansAnchor = /(?:答案|答|正确[答案]+)\s*[:：]/;
+  const items = [];
+  let cur = null;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.replace(/\s+$/, '');
+    if (qAnchor.test(line)) {
+      if (cur) items.push(cur);
+      cur = { q: trimmed.replace(qAnchor, '').trim(), options: [], answerHint: '' };
+    } else if (cur && optAnchor.test(line)) {
+      cur.options.push(trimmed.replace(optAnchor, '').trim());
+    } else if (cur && ansAnchor.test(line)) {
+      cur.answerHint = trimmed.replace(ansAnchor, '').trim();
+    } else if (cur && trimmed !== '') {
+      if (cur.answerHint) cur.answerHint = (cur.answerHint + ' ' + trimmed).trim();
+      else cur.q = (cur.q + ' ' + trimmed).trim();
+    }
+  }
+  if (cur) items.push(cur);
+  return items.filter(function (it) { return it.q.length > 0; })
+    .map(function (it) { return { q: it.q, options: it.options.length ? it.options : null, answerHint: it.answerHint }; });
+}
+
+/* ----------------------------- 文本归类到模块 ----------------------------- */
+function classify(text) {
+  const t = String(text || '');
+  if (/古诗|诗词|文言文|成语|词语|拼音|生字|阅读|作文|文学|课文|句子|标点|修辞/.test(t)) return '语文';
+  if (/单词|词汇|语法|时态|动词|名词|英语|交际|句型|翻译/.test(t)) return '英语';
+  if (/有理数|整式|单项式|多项式|合并同类项/.test(t)) return '数学';
+  if (/方程|一元一次/.test(t)) return '数学';
+  if (/线段|角|几何|度数|余角|补角/.test(t)) return '数学';
+  if (/数轴|相反数|倒数|绝对值/.test(t)) return '数学';
+  return '数学';
+}
+
+function splitToParsed(items) {
+  const out = {};
+  items.forEach(function (it) {
+    const mod = classify(it.q);
+    const q = validateQuestion({ q: it.q, answer: it.answerHint || '', kind: Array.isArray(it.options) ? 'choice' : 'fill', options: it.options || null });
+    if (!q) return;
+    if (!out[mod]) out[mod] = {};
+    if (!out[mod]['上传暂存']) out[mod]['上传暂存'] = [];
+    out[mod]['上传暂存'].push(q);
+  });
+  return out;
+}
+
+/* ----------------------------- 非结构化文本抽取 ----------------------------- */
+function readFileAsArrayBuffer(file) {
+  return new Promise(function (resolve, reject) {
+    const r = new FileReader();
+    r.onload = function () { resolve(r.result); };
+    r.onerror = function () { reject(r.error || new Error('read error')); };
+    r.readAsArrayBuffer(file);
+  });
+}
+
+function pdfToText(file) {
+  return loadLib('pdfjs').then(function () {
+    const lib = window.pdfjsLib;
+    if (lib && lib.GlobalWorkerOptions) {
+      lib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+    }
+    return (file.arrayBuffer ? file.arrayBuffer() : readFileAsArrayBuffer(file));
+  }).then(function (buf) {
+    return window.pdfjsLib.getDocument({ data: buf }).promise;
+  }).then(function (pdf) {
+    const ps = [];
+    for (let i = 1; i <= pdf.numPages; i++) {
+      ps.push(pdf.getPage(i).then(function (page) {
+        return page.getTextContent().then(function (c) {
+          return c.items.map(function (it) { return it.str; }).join(' ');
+        });
+      }));
+    }
+    return Promise.all(ps).then(function (pages) { return pages.join('\n'); });
+  });
+}
+
+function docxToText(file) {
+  return loadLib('mammoth').then(function () {
+    return (file.arrayBuffer ? file.arrayBuffer() : readFileAsArrayBuffer(file));
+  }).then(function (buf) {
+    return window.mammoth.extractRawText({ arrayBuffer: buf }).then(function (res) { return res.value; });
+  });
+}
+
+function imageToText(file) {
+  return loadLib('tesseract').then(function () {
+    return window.Tesseract.recognize(file, 'chi_sim+eng', { logger: function () {} });
+  }).then(function (res) { return res.data.text; });
+}
+
+/* ----------------------------- 上传模态框 UI ----------------------------- */
+function openUploadModal() {
+  closeUploadModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'upload-modal';
+  overlay.id = 'uploadModal';
+  overlay.innerHTML =
+    '<div class="upload-panel">'
+    + '<div class="upload-head"><span>📥 上传题库</span><button class="upload-x" onclick="closeUploadModal()">✕</button></div>'
+    + '<div class="upload-drop" id="dropZone">把文件拖到这里，或点下方按钮选择<br>（支持 JSON / CSV / TSV / Excel / PDF / Word / 图片）</div>'
+    + '<input type="file" id="uploadInput" multiple accept=".json,.csv,.tsv,.xlsx,.pdf,.docx,.png,.jpg,.jpeg">'
+    + '<div class="upload-hint">格式：<b>JSON / CSV / TSV</b> 离线即可并入；<b>PDF / Word / Excel / 图片</b> 首次需联网加载解析库。<br>'
+    + 'CSV 表头：module,chapter,type,kind,q,options,answer,explain（options 用 | 或 ; 分隔）。</div>'
+    + '<div class="upload-progress" id="uploadProgress" style="display:none;"><div class="upload-progress-bar"></div></div>'
+    + '<div class="upload-result" id="uploadResult"></div>'
+    + '<div class="btn-row">'
+    + '<button class="btn blue" id="btnConfirmMerge" onclick="confirmUploadMerge()">✅ 确认并入题库</button>'
+    + '<button class="btn yellow" id="btnSaveRaw" onclick="saveUploadAsRaw()">📝 仅保存为待整理文本</button>'
+    + '<button class="btn ghost" onclick="closeUploadModal()">取消</button>'
+    + '</div></div>';
+  document.body.appendChild(overlay);
+  const input = overlay.querySelector('#uploadInput');
+  if (input) input.addEventListener('change', function (e) { handleFiles(e.target.files); });
+  const dz = overlay.querySelector('#dropZone');
+  if (dz) {
+    dz.addEventListener('click', function () { if (input) input.click(); });
+    dz.addEventListener('dragover', function (e) { e.preventDefault(); dz.classList.add('drag'); });
+    dz.addEventListener('dragleave', function () { dz.classList.remove('drag'); });
+    dz.addEventListener('drop', function (e) { e.preventDefault(); dz.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
+  }
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) closeUploadModal(); });
+}
+
+function closeUploadModal() {
+  const m = document.getElementById('uploadModal');
+  if (m && m.parentNode) m.parentNode.removeChild(m);
+}
+
+function handleFiles(fileList) {
+  if (!fileList || !fileList.length) return;
+  const files = Array.prototype.slice.call(fileList);
+  const result = { parsed: {}, rawText: {}, hints: [] };
+  let remaining = files.length;
+  const done = function () {
+    remaining--;
+    if (remaining > 0) return;
+    __pendingUpload = (Object.keys(result.parsed).length || Object.keys(result.rawText).length) ? result : null;
+    renderUploadPreview(result);
+  };
+  files.forEach(function (file) {
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    if (ext === 'json') {
+      const r = new FileReader();
+      r.onload = function () {
+        try { mergeParsed(result.parsed, jsonToQuestions(JSON.parse(r.result))); }
+        catch (e) { result.hints.push('JSON 解析失败：' + file.name); }
+        done();
+      };
+      r.readAsText(file);
+    } else if (ext === 'csv' || ext === 'tsv') {
+      const r = new FileReader();
+      r.onload = function () { mergeParsed(result.parsed, csvToQuestions(r.result, ext === 'tsv' ? '\t' : ',')); done(); };
+      r.readAsText(file);
+    } else if (ext === 'xlsx') {
+      loadLib('xlsx').then(function () { return (file.arrayBuffer ? file.arrayBuffer() : readFileAsArrayBuffer(file)); })
+        .then(function (buf) { mergeParsed(result.parsed, xlsxToQuestions(buf)); })
+        .catch(function () { result.hints.push('Excel 解析失败（需联网首次加载解析库）：' + file.name); })
+        .then(done);
+    } else if (ext === 'pdf' || ext === 'docx' || ext === 'png' || ext === 'jpg' || ext === 'jpeg') {
+      const extract = ext === 'pdf' ? pdfToText(file) : (ext === 'docx' ? docxToText(file) : imageToText(file));
+      extract.then(function (text) {
+        result.rawText[file.name] = text;
+        mergeParsed(result.parsed, splitToParsed(heuristicSplit(text)));
+      }).catch(function () {
+        result.hints.push((ext === 'pdf' ? 'PDF' : (ext === 'docx' ? 'Word' : '图片')) + ' 解析失败（需联网首次加载解析库）：' + file.name);
+      }).then(done);
+    } else {
+      result.hints.push('不支持的文件类型：' + file.name);
+      done();
+    }
+  });
+}
+
+function renderUploadPreview(result) {
+  const box = document.getElementById('uploadResult');
+  if (!box) return;
+  let total = 0;
+  for (const mod in result.parsed) for (const ch in result.parsed[mod]) total += result.parsed[mod][ch].length;
+  let html = '<div class="upload-summary">解析到 <b>' + total + '</b> 道可并入题目。' + (result.hints.length ? '（' + result.hints.length + ' 条提示）' : '') + '</div>';
+  html += '<ul class="upload-preview">';
+  let shown = 0;
+  for (const mod in result.parsed) {
+    for (const ch in result.parsed[mod]) {
+      result.parsed[mod][ch].forEach(function (q) {
+        if (shown >= 30) return;
+        shown++;
+        html += '<li><span class="up-mod">' + escapeHtml(mod) + ' / ' + escapeHtml(ch) + '</span> '
+          + escapeHtml(q.q)
+          + (Array.isArray(q.options) ? ' ［' + q.options.map(escapeHtml).join('、') + '］' : '')
+          + (q.answer ? ' 答：' + escapeHtml(q.answer) : '');
+      });
+    }
+  }
+  html += '</ul>';
+  if (result.hints.length) html += '<div class="upload-hints">提示：' + result.hints.map(escapeHtml).join('；') + '</div>';
+  if (!total && Object.keys(result.rawText).length) {
+    html += '<div class="upload-note">已从 PDF/Word/图片 提取文本，但自动切题可能不完整；建议点「仅保存为待整理文本」，或确认并入后手动整理。</div>';
+  }
+  box.innerHTML = html;
+  const cm = document.getElementById('btnConfirmMerge');
+  if (cm) cm.disabled = (total === 0);
+}
+
+function confirmUploadMerge() {
+  if (!__pendingUpload) return;
+  const parsed = __pendingUpload.parsed;
+  if (parsed && Object.keys(parsed).length) {
+    applyQuestions(parsed);
+    saveUploaded(parsed);
+  }
+  closeUploadModal();
+  try { renderChapters(); } catch (e) {}
+}
+
+function saveUploadAsRaw() {
+  if (!__pendingUpload) return;
+  const parsed = {};
+  for (const fname in __pendingUpload.rawText) {
+    const text = __pendingUpload.rawText[fname] || '';
+    const mod = classify(text) || '数学';
+    const q = validateQuestion({ q: text.slice(0, 500), answer: '', kind: 'fill', options: null })
+      || { id: 'raw-' + Date.now() + '-' + Math.random().toString(36).slice(2, 5), type: '待整理', kind: 'fill', q: text.slice(0, 500), options: null, answer: '', explain: '' };
+    if (!parsed[mod]) parsed[mod] = {};
+    if (!parsed[mod]['上传暂存']) parsed[mod]['上传暂存'] = [];
+    parsed[mod]['上传暂存'].push(q);
+  }
+  if (__pendingUpload.parsed) {
+    for (const mod in __pendingUpload.parsed) {
+      for (const ch in __pendingUpload.parsed[mod]) {
+        if (!parsed[mod]) parsed[mod] = {};
+        if (!parsed[mod]['上传暂存']) parsed[mod]['上传暂存'] = [];
+        __pendingUpload.parsed[mod][ch].forEach(function (q) { parsed[mod]['上传暂存'].push(q); });
+      }
+    }
+  }
+  applyQuestions(parsed);
+  saveUploaded(parsed);
+  closeUploadModal();
+  try { renderChapters(); } catch (e) {}
+}
+
+
+/* ----------------------------- 启动 ----------------------------- */
+try { const p = loadUploaded(); if (p) applyQuestions(p); } catch (e) {}
+updatePoints();
+renderChapters();
+</script>
+</body>
+</html>
