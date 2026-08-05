@@ -212,6 +212,24 @@
   .upload-hints { color: #d33; font-size: 15px; margin-top: 8px; }
   .upload-note { color: #b06a00; font-size: 15px; background: #fff7e6; border-radius: 10px; padding: 8px 12px; margin-top: 8px; }
   #uploadInput { display: block; margin: 10px 0; }
+
+  /* ============ 📥 我的上传 管理页 ============ */
+  .btn.teal { background: #0d9488; color: #fff; box-shadow: 0 5px 0 #0f766e; }
+  .btn.teal:active { box-shadow: 0 2px 0 #0f766e; }
+  .up-badge { display: inline-block; margin-left: 8px; padding: 1px 8px; font-size: 13px; border-radius: 10px; background: #e0f2fe; color: #0369a1; vertical-align: middle; }
+  .uploads-top { text-align: right; margin-bottom: 12px; }
+  .upgrade-banner { background: #fff7e6; border-left: 6px solid #ffb300; border-radius: 12px; padding: 12px 16px; margin: 12px 0; font-size: 17px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .uploads-list { display: flex; flex-direction: column; gap: 14px; margin-top: 6px; }
+  .upload-card { background: #f6fbff; border-left: 6px solid #0d9488; border-radius: 16px; padding: 16px 18px; box-shadow: 0 4px 0 rgba(0,0,0,0.06); }
+  .up-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .up-file { font-size: 20px; font-weight: 700; color: var(--ink); }
+  .up-time { font-size: 15px; color: #888; }
+  .up-card-meta { font-size: 16px; color: var(--purple); margin: 6px 0 2px; }
+  .up-card-count { font-size: 18px; font-weight: 700; color: var(--green-dark); }
+  .raw-text { white-space: pre-wrap; background: #f6faff; border-radius: 12px; padding: 14px 16px; font-size: 17px; line-height: 1.6; max-height: 60vh; overflow-y: auto; }
+  .up-detail-item { background: #f6faff; border-left: 5px solid var(--blue); border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
+  .up-detail-q { font-size: 21px; font-weight: 700; }
+  .up-detail-a { font-size: 18px; color: var(--green-dark); margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -951,7 +969,8 @@ function renderQuestion() {
   html += '<div class="q-meta">📘 ' + escapeHtml(state.chapter) + ' · 题型：' + escapeHtml(q.type) + ' · 第 ' + (state.idx + 1) + ' / ' + total + ' 题</div>';
   html += '<div class="progress-wrap"><div class="progress-bar" style="width:' + pct + '%"></div></div>';
   html += '<div class="progress-label">闯关进度 ' + pct + '%</div>';
-  html += '<div class="q-text">' + escapeHtml(q.q) + '</div>';
+  const upBadge = (q.id && uploadedIds.has(q.id)) ? '<span class="up-badge">📥上传</span>' : '';
+  html += '<div class="q-text">' + upBadge + escapeHtml(q.q) + '</div>';
   html += body;
   html += fb;
   html += '<div class="btn-row">';
@@ -1119,6 +1138,7 @@ function navButtonsHtml() {
     + '<button class="btn ghost" onclick="renderWrong()">📕 错题集</button>'
     + '<button class="btn yellow" onclick="renderSettings()">⚙️ 设置</button>'
     + '<button class="btn blue" onclick="openUploadModal()">📥 上传题库</button>'
+    + '<button class="btn teal" onclick="renderUploads()">📥 我的上传</button>'
     + '</div>';
 }
 
@@ -1312,6 +1332,15 @@ const UPLOAD_KEY = 'koudou_upload_banks_v1';
 const __LIB_CACHE = {};
 let __pendingUpload = null;
 
+/* ----------------------------- 上传批次管理（📥 我的上传） ----------------------------- */
+let uploadBatches = [];          // Array<Batch>
+const uploadedIds = new Set();   // 所有已上传题的最终 id
+let needUpgradeNotice = false;   // 旧扁平数据已清空待提示
+// Batch 结构：
+// { id:"batch-<ts>-<rand>", sourceFile:"xxx.csv", uploadedAt:"ISO8601",
+//   items:{ "数学":{ "第三章":[ {id,type,kind,q,options,answer,explain}, ... ] } } }
+// raw 文本批：{ id, sourceFile, uploadedAt, kind:"raw", rawText:"..." }（无 items）
+
 /* ----------------------------- CDN 懒加载（运行时注入） ----------------------------- */
 function loadLib(name) {
   if (__LIB_CACHE[name]) return __LIB_CACHE[name];
@@ -1471,7 +1500,8 @@ function dedupeId(mod, ch, q, seen) {
 
 /* ----------------------------- 合并到运行时题库 ----------------------------- */
 function applyQuestions(parsed) {
-  if (!parsed || typeof parsed !== 'object') return;
+  const inserted = {};
+  if (!parsed || typeof parsed !== 'object') return inserted;
   for (const mod in parsed) {
     if (!ALL_BANKS[mod]) continue;
     const chapters = parsed[mod];
@@ -1480,39 +1510,134 @@ function applyQuestions(parsed) {
       const arr = chapters[ch];
       if (!Array.isArray(arr)) continue;
       if (!ALL_BANKS[mod][ch]) ALL_BANKS[mod][ch] = [];
+      if (!inserted[mod]) inserted[mod] = {};
+      if (!inserted[mod][ch]) inserted[mod][ch] = [];
       const seen = new Set();
       arr.forEach(function (raw) {
         const q = dedupeId(mod, ch, raw, seen);
         seen.add(q.id);
         ALL_BANKS[mod][ch].push(q);
+        inserted[mod][ch].push(q);
       });
+    }
+  }
+  return inserted;
+}
+
+/* ----------------------------- 批次持久化（基于 uploadBatches 数组） ----------------------------- */
+function genBatchId() {
+  return 'batch-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+}
+
+function loadBatches() {
+  try {
+    const r = Store.get(UPLOAD_KEY);
+    const p = r ? JSON.parse(r) : [];
+    return Array.isArray(p) ? p : [];
+  } catch (e) { return []; }
+}
+
+function saveBatches(batches) {
+  try { Store.set(UPLOAD_KEY, JSON.stringify(batches || [])); } catch (e) {}
+}
+
+/* ----------------------------- 初始化：从存储载入批次并并入运行时题库 ----------------------------- */
+function initBatches() {
+  let raw = null;
+  try { raw = Store.get(UPLOAD_KEY); } catch (e) {}
+  let parsed = null;
+  if (raw) { try { parsed = JSON.parse(raw); } catch (e) { parsed = null; } }
+  if (Array.isArray(parsed)) {
+    uploadBatches = parsed;
+  } else if (parsed && typeof parsed === 'object') {
+    // 旧扁平格式 → 清空并提示（D3 迁移）
+    uploadBatches = [];
+    needUpgradeNotice = true;
+    try { Store.set(UPLOAD_KEY, '[]'); } catch (e) {}
+  } else {
+    uploadBatches = [];
+  }
+  uploadedIds.clear();
+  uploadBatches.forEach(function (b) {
+    if (b && b.items) applyQuestions(b.items);
+    collectIds(b && b.items);
+  });
+}
+
+function collectIds(items) {
+  if (!items || typeof items !== 'object') return;
+  for (const mod in items) {
+    const chs = items[mod];
+    if (!chs || typeof chs !== 'object') continue;
+    for (const ch in chs) {
+      if (!Array.isArray(chs[ch])) continue;
+      chs[ch].forEach(function (q) { if (q && q.id) uploadedIds.add(q.id); });
     }
   }
 }
 
-/* ----------------------------- 持久化（独立键，复用 Store） ----------------------------- */
-function saveUploaded(parsed) {
-  try {
-    const cur = loadUploaded() || {};
-    if (parsed && typeof parsed === 'object') {
-      for (const mod in parsed) {
-        if (!cur[mod]) cur[mod] = {};
-        const chapters = parsed[mod];
-        if (chapters && typeof chapters === 'object') {
-          for (const ch in chapters) {
-            if (!Array.isArray(chapters[ch])) continue;
-            if (!cur[mod][ch]) cur[mod][ch] = [];
-            chapters[ch].forEach(function (q) { cur[mod][ch].push(q); });
-          }
-        }
-      }
-    }
-    Store.set(UPLOAD_KEY, JSON.stringify(cur));
-  } catch (e) {}
+/* ----------------------------- 统一提交入口 ----------------------------- */
+function commitUpload(parsed, meta) {
+  const inserted = applyQuestions(parsed);   // 并入 ALL_BANKS 并返回最终 id 结构
+  const batch = {
+    id: genBatchId(),
+    sourceFile: (meta && meta.sourceFile) || '手动上传',
+    uploadedAt: new Date().toISOString(),
+    items: inserted
+  };
+  uploadBatches.push(batch);
+  saveBatches(uploadBatches);
+  collectIds(inserted);
+  return batch.id;
 }
 
-function loadUploaded() {
-  try { const r = Store.get(UPLOAD_KEY); return r ? JSON.parse(r) : null; } catch (e) { return null; }
+/* ----------------------------- 删除批次 ----------------------------- */
+function collectIdsTo(items, set) {
+  if (!items || typeof items !== 'object') return;
+  for (const mod in items) {
+    const chs = items[mod];
+    if (!chs || typeof chs !== 'object') continue;
+    for (const ch in chs) {
+      if (!Array.isArray(chs[ch])) continue;
+      chs[ch].forEach(function (q) { if (q && q.id) set.add(q.id); });
+    }
+  }
+}
+
+function deleteBatch(id) {
+  const batch = uploadBatches.find(function (b) { return b.id === id; });
+  if (!batch) return;
+  const rmIds = new Set();
+  if (batch.items) collectIdsTo(batch.items, rmIds);  // 收集该批所有最终 id
+  uploadBatches = uploadBatches.filter(function (b) { return b.id !== id; });
+  saveBatches(uploadBatches);
+  if (batch.items) {
+    for (const mod in batch.items) {
+      if (!ALL_BANKS[mod]) continue;
+      for (const ch in batch.items[mod]) {
+        if (!ALL_BANKS[mod][ch]) continue;
+        ALL_BANKS[mod][ch] = ALL_BANKS[mod][ch].filter(function (q) { return !rmIds.has(q.id); });
+      }
+    }
+  }
+  rmIds.forEach(function (x) { uploadedIds.delete(x); });
+}
+
+function confirmDeleteBatch(id) {
+  if (window.confirm('确定删除这一批上传题目吗？此操作不可恢复。')) {
+    deleteBatch(id);
+    renderUploads();
+  }
+}
+
+function dismissUpgradeNotice() {
+  needUpgradeNotice = false;
+  renderUploads();
+}
+
+/* ----------------------------- 时间格式化 ----------------------------- */
+function formatUploadTime(iso) {
+  try { return new Date(iso).toLocaleString('zh-CN'); } catch (e) { return iso || ''; }
 }
 
 /* ----------------------------- 合并解析结果（内部） ----------------------------- */
@@ -1668,7 +1793,7 @@ function closeUploadModal() {
 function handleFiles(fileList) {
   if (!fileList || !fileList.length) return;
   const files = Array.prototype.slice.call(fileList);
-  const result = { parsed: {}, rawText: {}, hints: [] };
+  const result = { parsed: {}, rawText: {}, hints: [], sourceFiles: [] };
   let remaining = files.length;
   const done = function () {
     remaining--;
@@ -1677,6 +1802,7 @@ function handleFiles(fileList) {
     renderUploadPreview(result);
   };
   files.forEach(function (file) {
+    result.sourceFiles.push(file.name);
     const ext = (file.name.split('.').pop() || '').toLowerCase();
     if (ext === 'json') {
       const r = new FileReader();
@@ -1742,45 +1868,131 @@ function renderUploadPreview(result) {
 
 function confirmUploadMerge() {
   if (!__pendingUpload) return;
-  const parsed = __pendingUpload.parsed;
-  if (parsed && Object.keys(parsed).length) {
-    applyQuestions(parsed);
-    saveUploaded(parsed);
-  }
+  const src = (__pendingUpload && __pendingUpload.sourceFiles && __pendingUpload.sourceFiles.join(' | ')) || '手动上传';
+  commitUpload(__pendingUpload.parsed, { sourceFile: src });
   closeUploadModal();
-  try { renderChapters(); } catch (e) {}
+  renderUploads();
 }
 
 function saveUploadAsRaw() {
   if (!__pendingUpload) return;
-  const parsed = {};
-  for (const fname in __pendingUpload.rawText) {
-    const text = __pendingUpload.rawText[fname] || '';
-    const mod = classify(text) || '数学';
-    const q = validateQuestion({ q: text.slice(0, 500), answer: '', kind: 'fill', options: null })
-      || { id: 'raw-' + Date.now() + '-' + Math.random().toString(36).slice(2, 5), type: '待整理', kind: 'fill', q: text.slice(0, 500), options: null, answer: '', explain: '' };
-    if (!parsed[mod]) parsed[mod] = {};
-    if (!parsed[mod]['上传暂存']) parsed[mod]['上传暂存'] = [];
-    parsed[mod]['上传暂存'].push(q);
+  const src = (__pendingUpload && __pendingUpload.sourceFiles && __pendingUpload.sourceFiles.join(' | ')) || '手动上传';
+  let rawText = '';
+  if (__pendingUpload.rawText) {
+    for (const fname in __pendingUpload.rawText) {
+      rawText += (__pendingUpload.rawText[fname] || '') + '\n';
+    }
   }
-  if (__pendingUpload.parsed) {
+  if (!rawText.trim() && __pendingUpload.parsed && Object.keys(__pendingUpload.parsed).length) {
+    // 没有可提取文本但有待整理题：把预览题文本拼成 rawText 以便后续整理
     for (const mod in __pendingUpload.parsed) {
       for (const ch in __pendingUpload.parsed[mod]) {
-        if (!parsed[mod]) parsed[mod] = {};
-        if (!parsed[mod]['上传暂存']) parsed[mod]['上传暂存'] = [];
-        __pendingUpload.parsed[mod][ch].forEach(function (q) { parsed[mod]['上传暂存'].push(q); });
+        __pendingUpload.parsed[mod][ch].forEach(function (q) { rawText += (q.q || '') + '\n'; });
       }
     }
   }
-  applyQuestions(parsed);
-  saveUploaded(parsed);
+  const batch = { id: genBatchId(), sourceFile: src, uploadedAt: new Date().toISOString(), kind: 'raw', rawText: rawText };
+  uploadBatches.push(batch);
+  saveBatches(uploadBatches);
   closeUploadModal();
-  try { renderChapters(); } catch (e) {}
+  renderUploads();
+}
+
+/* ----------------------------- 📥 我的上传 管理页 ----------------------------- */
+function renderUploads() {
+  let html = '<div class="card"><h2>📥 我的上传</h2>';
+  html += '<div class="uploads-top"><button class="btn blue" onclick="openUploadModal()">📥 上传题库</button></div>';
+  if (needUpgradeNotice) {
+    html += '<div class="upgrade-banner">检测到旧版上传数据，已升级清空，请重新上传。（已升级题库格式）'
+      + '<button class="btn ghost" onclick="dismissUpgradeNotice()">知道了</button></div>';
+  }
+  if (uploadBatches.length === 0) {
+    html += '<div class="subtitle">还没有上传过题目，去『上传题库』试试 →</div>';
+    html += '<div class="btn-row"><button class="btn blue" onclick="openUploadModal()">📥 上传题库</button></div>';
+  } else {
+    html += '<div class="uploads-list">';
+    for (let i = uploadBatches.length - 1; i >= 0; i--) {
+      const b = uploadBatches[i];
+      if (!b) continue;
+      const time = formatUploadTime(b.uploadedAt);
+      const isRaw = b.kind === 'raw';
+      let metaLine = '';
+      let countLine = '';
+      if (isRaw) {
+        const len = (b.rawText || '').length;
+        countLine = '待整理文本 ' + len + ' 字';
+        metaLine = '未结构化 · 待整理';
+      } else {
+        let count = 0;
+        const chs = [];
+        if (b.items) {
+          for (const mod in b.items) {
+            for (const ch in b.items[mod]) {
+              const arr = b.items[mod][ch];
+              if (Array.isArray(arr)) { count += arr.length; chs.push(escapeHtml(mod) + ' · ' + escapeHtml(ch)); }
+            }
+          }
+        }
+        countLine = count + ' 道题';
+        metaLine = chs.join('、');
+      }
+      html += '<div class="upload-card">';
+      html += '<div class="up-card-head"><span class="up-file">📄 ' + escapeHtml(b.sourceFile || '手动上传') + '</span>'
+        + '<span class="up-time">' + escapeHtml(time) + '</span></div>';
+      html += '<div class="up-card-meta">' + metaLine + '</div>';
+      html += '<div class="up-card-count">' + countLine + '</div>';
+      html += '<div class="btn-row">';
+      html += '<button class="btn ghost" onclick="renderUploadDetail(\'' + b.id + '\')">查看</button>';
+      html += '<button class="btn pink" onclick="confirmDeleteBatch(\'' + b.id + '\')">删除</button>';
+      html += '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+  html += navButtonsHtml();
+  html += '<div class="btn-row"><button class="btn ghost" onclick="renderChapters()">🏠 返回首页</button></div>';
+  html += '</div>';
+  app.innerHTML = html;
+}
+
+/* ----------------------------- 批次详情（只读） ----------------------------- */
+function renderUploadDetail(id) {
+  const b = uploadBatches.find(function (x) { return x.id === id; });
+  if (!b) { renderUploads(); return; }
+  let html = '<div class="card">';
+  html += '<div class="btn-row"><button class="btn ghost" onclick="renderUploads()">⬅️ 返回</button></div>';
+  html += '<h2>📥 ' + escapeHtml(b.sourceFile || '手动上传') + '</h2>';
+  html += '<div class="subtitle">' + escapeHtml(formatUploadTime(b.uploadedAt)) + '</div>';
+  if (b.kind === 'raw') {
+    html += '<div class="raw-text">' + escapeHtml(b.rawText || '') + '</div>';
+  } else {
+    let any = false;
+    if (b.items) {
+      for (const mod in b.items) {
+        for (const ch in b.items[mod]) {
+          const arr = b.items[mod][ch];
+          if (!Array.isArray(arr)) continue;
+          arr.forEach(function (q, i) {
+            any = true;
+            html += '<div class="up-detail-item">';
+            html += '<div class="up-detail-q">' + (i + 1) + '. ' + escapeHtml(q.q) + '</div>';
+            html += '<div class="up-detail-a">答：' + escapeHtml(q.answer || '（无）') + '</div>';
+            html += '</div>';
+          });
+        }
+      }
+    }
+    if (!any) html += '<div class="subtitle">该批次没有可展示的题目。</div>';
+  }
+  html += navButtonsHtml();
+  html += '<div class="btn-row"><button class="btn ghost" onclick="renderUploads()">⬅️ 返回列表</button></div>';
+  html += '</div>';
+  app.innerHTML = html;
 }
 
 
 /* ----------------------------- 启动 ----------------------------- */
-try { const p = loadUploaded(); if (p) applyQuestions(p); } catch (e) {}
+try { initBatches(); } catch (e) {}
 updatePoints();
 renderChapters();
 </script>
